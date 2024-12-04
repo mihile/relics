@@ -54,7 +54,7 @@ public class UpgradeExperienceActionWidget extends AbstractExperienceActionWidge
         int renderWidth = 0;
 
         List<MutableComponent> entries = Lists.newArrayList(
-                Component.literal("To avoid issues with existing worlds, this feature will be added with the update to Minecraft 1.22 version.")
+                Component.literal("To avoid issues with existing worlds, this feature will be added with the update to Minecraft 1.22.")
         );
 
         for (MutableComponent entry : entries) {

@@ -108,7 +108,7 @@ public interface IRelicItem {
     }
 
     @UnstableApi
-    default boolean canUseLevelingSource(ItemStack stack, String source) {
+    default boolean isLevelingSourceUnlocked(ItemStack stack, String source) {
         var data = getLevelingSourceData(source);
 
         return data.getRequiredLevel() >= getRelicLevel(stack) && (data.getRequiredAbility().isEmpty() || isAbilityUnlocked(stack, data.getRequiredAbility()));

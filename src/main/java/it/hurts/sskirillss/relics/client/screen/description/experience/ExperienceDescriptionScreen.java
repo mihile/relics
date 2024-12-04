@@ -23,6 +23,7 @@ import it.hurts.sskirillss.relics.client.screen.description.relic.widgets.RelicE
 import it.hurts.sskirillss.relics.client.screen.utils.ScreenUtils;
 import it.hurts.sskirillss.relics.init.BadgeRegistry;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
+import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.data.AnimationData;
 import it.hurts.sskirillss.relics.utils.data.GUIRenderer;
 import it.hurts.sskirillss.relics.utils.data.SpriteAnchor;
@@ -157,8 +158,10 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
         var source = getSelectedSource();
 
-        this.upgradeButton = this.addRenderableWidget(new UpgradeExperienceActionWidget(x + 288, y + 70, this, source));
-        this.resetButton = this.addRenderableWidget(new ResetExperienceActionWidget(x + 288, y + 90, this, source));
+        if (relic.isLevelingSourceUnlocked(stack, source)) {
+            this.upgradeButton = this.addRenderableWidget(new UpgradeExperienceActionWidget(x + 288, y + 70, this, source));
+            this.resetButton = this.addRenderableWidget(new ResetExperienceActionWidget(x + 288, y + 90, this, source));
+        }
     }
 
     @Override
@@ -187,12 +190,11 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         if (stack == null || !(stack.getItem() instanceof IRelicItem relic) || player == null)
             return;
 
-        var relicData = relic.getRelicData();
-
-        if (relicData == null)
-            return;
-
         var source = getSelectedSource();
+        var sourceData = relic.getLevelingSourceData(source);
+
+        if (sourceData == null)
+            return;
 
         PoseStack poseStack = guiGraphics.pose();
 
@@ -237,9 +239,21 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
         poseStack.scale(0.75F, 0.75F, 1F);
 
-        var sourceName = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".title", source);
+        var title = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".title", source);
 
-        guiGraphics.drawString(minecraft.font, sourceName.withStyle(ChatFormatting.BOLD), (int) ((x + 113) * 1.33F), (int) ((y + 67) * 1.33F), DescriptionUtils.TEXT_COLOR, false);
+        if (!relic.isLevelingSourceUnlocked(stack, source)) {
+            title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), source.length());
+
+            var random = player.getRandom();
+
+            var shakeX = MathUtils.randomFloat(random) * 0.5F;
+            var shakeY = MathUtils.randomFloat(random) * 0.5F;
+
+            poseStack.translate(shakeX, shakeY, 0F);
+        } else
+            title.withStyle(ChatFormatting.BOLD);
+
+        guiGraphics.drawString(minecraft.font, title, (int) ((x + 113) * 1.33F), (int) ((y + 67) * 1.33F), DescriptionUtils.TEXT_COLOR, false);
 
         poseStack.popPose();
 
@@ -249,9 +263,11 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
         yOff = 9;
 
-        sourceName = Component.literal("«").append(sourceName).append("»").withStyle(ChatFormatting.BOLD);
+        var ability = sourceData.getRequiredAbility();
 
-        if (relic.canUseLevelingSource(stack, source)) {
+        title = Component.literal("«").append(ability.isEmpty() ? title : Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability, ability)).append("»").withStyle(ChatFormatting.BOLD);
+
+        if (relic.isLevelingSourceUnlocked(stack, source)) {
             List<MutableComponent> components = new ArrayList<>();
 
             var wantsUpgrade = upgradeButton != null && upgradeButton.isHovered();
@@ -281,7 +297,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
             var pattern = Pattern.compile("([^ .,!?;:]*%(1)\\$s[^ .,!?;:]*)");
 
-            for (var line : font.getSplitter().splitLines(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".description", "%1$s", sourceName), 360, Style.EMPTY)) {
+            for (var line : font.getSplitter().splitLines(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".description", "%1$s", title), 350, Style.EMPTY)) {
                 String unformattedLine = line.getString().replace("%%", "%");
 
                 int currentX = (x + 112) * 2;
@@ -335,12 +351,12 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         } else {
             List<Object> placeholders = Arrays.asList(
                     relic.getLevelingSourceData(source).getInitialValue(),
-                    sourceName
+                    title
             );
 
             var component = ScreenUtils.stylizeWidthReplacement(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), source.length());
 
-            for (FormattedCharSequence line : font.split(component, 360)) {
+            for (FormattedCharSequence line : font.split(component, 350)) {
                 guiGraphics.drawString(font, line, (x + 112) * 2, (y + 74) * 2 + yOff, 0x662f13, false);
 
                 yOff += 10;

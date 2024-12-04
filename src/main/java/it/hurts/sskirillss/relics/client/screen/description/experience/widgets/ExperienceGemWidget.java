@@ -16,7 +16,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.Locale;
@@ -51,6 +50,8 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
         var poseStack = guiGraphics.pose();
         var sourceData = relic.getLevelingSourcesData().getSources().get(source);
 
+        var isUnlocked = relic.isLevelingSourceUnlocked(stack, source);
+
         poseStack.pushPose();
 
         RenderSystem.enableBlend();
@@ -65,7 +66,7 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
 
         var shape = sourceData.getShape().name().toLowerCase(Locale.ROOT);
 
-        GUIRenderer.begin(sourceData.getIcon().apply(stack), poseStack)
+        GUIRenderer.begin(isUnlocked ? sourceData.getIcon().apply(stack) : DescriptionTextures.SMALL_CARD_LOCK_BACKGROUND, poseStack)
                 .pos(0, -1)
                 .end();
 
