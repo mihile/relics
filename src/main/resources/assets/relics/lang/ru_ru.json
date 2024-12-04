@@ -483,6 +483,8 @@
   "tooltip.relics.springy_boot.description": "Наделяет владельца реликвии особой упругостью, позволяющей ему отпрыгивать от любых твёрдых поверхностей.",
   "tooltip.relics.springy_boot.ability.bounce": "Упругость",
   "tooltip.relics.springy_boot.ability.bounce.description": "Повышает упругость всех блоков на %1$s%% относительно блока слизи, позволяя игроку отпрыгивать от них при падении. При активации на земле подбрасывает игрока в воздух.",
+  "tooltip.relics.springy_boot.leveling_source.bounce.title": "Упругость",
+  "tooltip.relics.springy_boot.leveling_source.bounce.description": "+%1$s единиц опыта за каждый совершённый отскок от поверхности при помощи способности %2$s.",
 
   "item.relics.relic_experience_bottle": "Пузырёк опыта реликвии",
 

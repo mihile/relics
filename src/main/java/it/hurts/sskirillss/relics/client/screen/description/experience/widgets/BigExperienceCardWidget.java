@@ -14,6 +14,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Locale;
+
 public class BigExperienceCardWidget extends AbstractDescriptionWidget implements IHoverableWidget, ITickingWidget {
     private ExperienceDescriptionScreen screen;
 
@@ -32,13 +34,13 @@ public class BigExperienceCardWidget extends AbstractDescriptionWidget implement
 
         var player = minecraft.player;
         var poseStack = guiGraphics.pose();
-        var source = relic.getLevelingData().getSources().getSources().get(screen.getSelectedSource());
+        var source = relic.getLevelingSourcesData().getSources().get(screen.getSelectedSource());
 
         float color = (float) (1.05F + (Math.sin((player.tickCount + (source.getId().length() * 10)) * 0.2F) * 0.1F));
 
         poseStack.pushPose();
 
-        GUIRenderer.begin(source.getIcon(), poseStack)
+        GUIRenderer.begin(source.getIcon().apply(stack), poseStack)
                 .anchor(SpriteAnchor.TOP_LEFT)
                 .color(color, color, color, 1F)
                 .pos(getX() + 7, getY() + 10)
