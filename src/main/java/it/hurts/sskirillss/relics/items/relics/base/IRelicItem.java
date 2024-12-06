@@ -192,7 +192,7 @@ public interface IRelicItem {
     }
 
     default int getRelicQuality(ItemStack stack) {
-        Map<String, AbilityData> abilities = getRelicData().getAbilities().getAbilities();
+        Map<String, AbilityData> abilities = getAbilitiesData().getAbilities();
 
         if (abilities.isEmpty())
             return 0;
@@ -201,7 +201,9 @@ public interface IRelicItem {
         double sum = 0;
 
         for (Map.Entry<String, AbilityData> entry : abilities.entrySet()) {
-            if (entry.getValue().getMaxLevel() == 0) {
+            var ability = entry.getKey();
+
+            if (!canBeUpgraded(ability) || !isAbilityUnlocked(stack, ability)) {
                 --size;
 
                 continue;

@@ -11,8 +11,11 @@ import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.data.GUIRenderer;
 import it.hurts.sskirillss.relics.utils.data.SpriteAnchor;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
 
 public class BigExperienceCardWidget extends AbstractDescriptionWidget implements IHoverableWidget, ITickingWidget {
@@ -60,11 +63,17 @@ public class BigExperienceCardWidget extends AbstractDescriptionWidget implement
                 .pos(getX(), getY())
                 .end();
 
-        if (isHovered())
-            GUIRenderer.begin(DescriptionTextures.BIG_CARD_FRAME_OUTLINE, poseStack)
-                    .anchor(SpriteAnchor.TOP_LEFT)
-                    .pos(getX() - 1, getY() - 1)
-                    .end();
+        {
+            poseStack.pushPose();
+
+            MutableComponent pointsComponent = Component.literal(isUnlocked ? "1" : "?").withStyle(ChatFormatting.BOLD);
+
+            poseStack.scale(0.75F, 0.75F, 1F);
+
+            guiGraphics.drawString(minecraft.font, pointsComponent, (int) (((getX() + 25.5F) * 1.33F) - (minecraft.font.width(pointsComponent) / 2F)), (int) ((getY() + 4) * 1.33F), isUnlocked ? 0xFFE278 : 0xB7AED9, true);
+
+            poseStack.popPose();
+        }
 
         poseStack.popPose();
     }

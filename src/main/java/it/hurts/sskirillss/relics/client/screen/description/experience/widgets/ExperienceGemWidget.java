@@ -10,9 +10,12 @@ import it.hurts.sskirillss.relics.client.screen.utils.ParticleStorage;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.utils.Reference;
 import it.hurts.sskirillss.relics.utils.data.GUIRenderer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -66,9 +69,17 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
 
         var shape = sourceData.getShape().name().toLowerCase(Locale.ROOT);
 
-        GUIRenderer.begin(isUnlocked ? sourceData.getIcon().apply(stack) : DescriptionTextures.SMALL_CARD_LOCK_BACKGROUND, poseStack)
-                .pos(0, -1)
-                .end();
+        var color = (float) (1.05F + (Math.sin((player.tickCount + (source.length() * 10)) * 0.2F) * 0.1F));
+
+        if (isUnlocked)
+            GUIRenderer.begin(sourceData.getIcon().apply(stack), poseStack)
+                    .pos(0, -1)
+                    .color(color, color, color, 1F)
+                    .end();
+        else
+            GUIRenderer.begin(DescriptionTextures.SMALL_CARD_LOCK_BACKGROUND, poseStack)
+                    .pos(0, -1)
+                    .end();
 
         GUIRenderer.begin(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/gui/description/experience/gems/" + shape + "/" + sourceData.getColor().name().toLowerCase(Locale.ROOT) + ".png"), poseStack)
                 .end();
@@ -77,6 +88,16 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
                 .end();
 
         RenderSystem.disableBlend();
+
+        {
+            MutableComponent title = Component.literal(isUnlocked ? "1" : "?").withStyle(ChatFormatting.BOLD);
+
+            float textScale = 0.5F;
+
+            poseStack.scale(textScale, textScale, textScale);
+
+            guiGraphics.drawString(minecraft.font, title, -((width + 1) / 2) - (minecraft.font.width(title) / 2) + 16, (-(height / 2) + 40), isUnlocked ? 0xFFE278 : 0xB7AED9, true);
+        }
 
         poseStack.popPose();
     }
