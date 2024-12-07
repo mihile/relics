@@ -1,5 +1,6 @@
 package it.hurts.sskirillss.relics.client.screen.description.experience.widgets;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import it.hurts.sskirillss.relics.client.screen.base.IHoverableWidget;
 import it.hurts.sskirillss.relics.client.screen.base.ITickingWidget;
 import it.hurts.sskirillss.relics.client.screen.description.experience.ExperienceDescriptionScreen;
@@ -9,6 +10,7 @@ import it.hurts.sskirillss.relics.client.screen.description.research.particles.S
 import it.hurts.sskirillss.relics.client.screen.utils.ParticleStorage;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.utils.MathUtils;
+import it.hurts.sskirillss.relics.utils.Reference;
 import it.hurts.sskirillss.relics.utils.data.GUIRenderer;
 import it.hurts.sskirillss.relics.utils.data.SpriteAnchor;
 import net.minecraft.ChatFormatting;
@@ -16,7 +18,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+
+import java.util.Locale;
 
 public class BigExperienceCardWidget extends AbstractDescriptionWidget implements IHoverableWidget, ITickingWidget {
     private ExperienceDescriptionScreen screen;
@@ -45,14 +50,24 @@ public class BigExperienceCardWidget extends AbstractDescriptionWidget implement
 
         poseStack.pushPose();
 
-        if (isUnlocked)
+        if (isUnlocked) {
             GUIRenderer.begin(sourceData.getIcon().apply(stack), poseStack)
                     .anchor(SpriteAnchor.TOP_LEFT)
                     .color(color, color, color, 1F)
                     .pos(getX() + 7, getY() + 10)
                     .texSize(34, 49)
                     .end();
-        else
+
+            RenderSystem.enableBlend();
+
+            GUIRenderer.begin(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/gui/description/experience/filters/" + sourceData.getColor().name().toLowerCase(Locale.ROOT) + ".png"), poseStack)
+                    .anchor(SpriteAnchor.TOP_LEFT)
+                    .pos(getX() + 7, getY() + 10)
+                    .texSize(34, 49)
+                    .end();
+
+            RenderSystem.disableBlend();
+        } else
             GUIRenderer.begin(DescriptionTextures.BIG_CARD_BACKGROUND, poseStack)
                     .anchor(SpriteAnchor.TOP_LEFT)
                     .pos(getX() + 7, getY() + 10)
