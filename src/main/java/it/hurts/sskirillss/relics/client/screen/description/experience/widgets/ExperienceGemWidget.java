@@ -84,7 +84,7 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
         GUIRenderer.begin(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/gui/description/experience/gems/" + shape + "/" + sourceData.getColor().name().toLowerCase(Locale.ROOT) + ".png"), poseStack)
                 .end();
 
-        GUIRenderer.begin(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/gui/description/experience/gems/" + shape + "/frame.png"), poseStack)
+        GUIRenderer.begin(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/gui/description/experience/gems/" + shape + "/frame_" + (isUnlocked ? "unlocked" : "locked") + ".png"), poseStack)
                 .end();
 
         RenderSystem.disableBlend();
