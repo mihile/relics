@@ -114,6 +114,20 @@ public interface IRelicItem {
         return data.getRequiredLevel() >= getRelicLevel(stack) && (data.getRequiredAbility().isEmpty() || isAbilityUnlocked(stack, data.getRequiredAbility()));
     }
 
+    @UnstableApi
+    default int getLevelingSourceValue(ItemStack stack, String source) {
+        var data = getLevelingSourceData(source);
+
+        // TODO: Use component value instead
+        return data.getInitialValue();
+    }
+
+    @UnstableApi
+    default int getLevelingSourceLevel(ItemStack stack, String source) {
+        // TODO: Use component value instead
+        return 1;
+    }
+
     default LootData getLootData() {
         return getRelicData().getLoot();
     }

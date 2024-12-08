@@ -23,7 +23,7 @@ import net.minecraft.util.RandomSource;
 
 import java.util.Locale;
 
-public class BigExperienceCardWidget extends AbstractDescriptionWidget implements IHoverableWidget, ITickingWidget {
+public class BigExperienceCardWidget extends AbstractDescriptionWidget implements ITickingWidget {
     private ExperienceDescriptionScreen screen;
 
     public BigExperienceCardWidget(int x, int y, ExperienceDescriptionScreen screen) {
@@ -81,7 +81,7 @@ public class BigExperienceCardWidget extends AbstractDescriptionWidget implement
         {
             poseStack.pushPose();
 
-            MutableComponent pointsComponent = Component.literal(isUnlocked ? "1" : "?").withStyle(ChatFormatting.BOLD);
+            MutableComponent pointsComponent = Component.literal(isUnlocked ? String.valueOf(relic.getLevelingSourceLevel(stack, source)) : "?").withStyle(ChatFormatting.BOLD);
 
             poseStack.scale(0.75F, 0.75F, 1F);
 
@@ -91,60 +91,6 @@ public class BigExperienceCardWidget extends AbstractDescriptionWidget implement
         }
 
         poseStack.popPose();
-    }
-
-    @Override
-    public void onHovered(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-//        var stack = screen.getStack();
-//        var ability = screen.getSelectedAbility();
-//
-//        if (!(stack.getItem() instanceof IRelicItem relic) || !relic.isAbilityUnlocked(stack, ability))
-//            return;
-//
-//        PoseStack poseStack = guiGraphics.pose();
-//
-//        List<FormattedCharSequence> tooltip = Lists.newArrayList();
-//
-//        int maxWidth = 150;
-//        int renderWidth = 0;
-//
-//        List<MutableComponent> entries = Lists.newArrayList(
-//                Component.literal("").append(Component.translatable("tooltip.relics.researching.ability.info.level").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.UNDERLINE)).append(" " + relic.getAbilityLevel(stack, ability) + "/" + relic.getAbilityData(ability).getMaxLevel()),
-//                Component.literal("").append(Component.translatable("tooltip.relics.researching.ability.info.quality").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.UNDERLINE)).append(" " + MathUtils.round(relic.getAbilityQuality(stack, ability) / 2F, 1) + "/" + relic.getMaxQuality() / 2),
-//                Component.literal(" ")
-//        );
-//
-//        if (Screen.hasShiftDown())
-//            entries.add(Component.translatable("tooltip.relics.researching.ability.info.extra_info").withStyle(ChatFormatting.ITALIC));
-//        else
-//            entries.add(Component.translatable("tooltip.relics.researching.general.extra_info"));
-//
-//        for (MutableComponent entry : entries) {
-//            int entryWidth = (minecraft.font.width(entry) / 2);
-//
-//            if (entryWidth > renderWidth)
-//                renderWidth = Math.min(entryWidth + 2, maxWidth);
-//
-//            tooltip.addAll(minecraft.font.split(entry, maxWidth * 2));
-//        }
-//
-//        poseStack.pushPose();
-//
-//        poseStack.translate(0F, 0F, 400);
-//
-//        DescriptionUtils.drawTooltipBackground(guiGraphics, renderWidth, tooltip.size() * 5, mouseX - 9 - (renderWidth / 2), mouseY);
-//
-//        poseStack.scale(0.5F, 0.5F, 0.5F);
-//
-//        int yOff = 0;
-//
-//        for (FormattedCharSequence entry : tooltip) {
-//            guiGraphics.drawString(minecraft.font, entry, ((mouseX - renderWidth / 2) + 1) * 2, ((mouseY + yOff + 9) * 2), DescriptionUtils.TEXT_COLOR, false);
-//
-//            yOff += 5;
-//        }
-//
-//        poseStack.popPose();
     }
 
     @Override
