@@ -182,7 +182,7 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
         } else if (!relic.isAbilityUnlocked(stack, requiredAbility)) {
             entries.add(Component.literal(" "));
 
-            entries.add(Component.literal("").append(Component.translatable("tooltip.relics.researching.relic.gem.locked_ability", Component.literal("«").append(Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + requiredAbility, requiredAbility)).append("»").withStyle(ChatFormatting.BOLD))));
+            entries.add(Component.literal("").append(Component.translatable("tooltip.relics.researching.relic.gem.locked_ability")));
         }
 
         for (MutableComponent entry : entries) {

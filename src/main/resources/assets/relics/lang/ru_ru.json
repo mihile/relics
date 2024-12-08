@@ -53,7 +53,7 @@
   "tooltip.relics.researching.relic.card.ready_to_upgrade": "Способность готова к улучшению!",
 
   "tooltip.relics.researching.relic.gem.low_level": "Для разблокировки источника получения опыта необходимо повысить уровень реликвии до %1$s!",
-  "tooltip.relics.researching.relic.gem.locked_ability": "Для разблокировки источника получения опыта необходимо разблокировать и исследовать способность %1$s!",
+  "tooltip.relics.researching.relic.gem.locked_ability": "Для разблокировки источника получения опыта необходимо разблокировать и исследовать связанную способность!",
 
   "tooltip.relics.researching.tab.relic": "Реликвия",
   "tooltip.relics.researching.tab.ability": "Способности",

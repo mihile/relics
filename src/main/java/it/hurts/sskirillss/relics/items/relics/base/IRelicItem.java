@@ -898,6 +898,10 @@ public interface IRelicItem {
         return isEnoughLevel(stack, ability) && isLockUnlocked(stack, ability) && isAbilityResearched(stack, ability);
     }
 
+    default boolean hasUnlockedAbility(ItemStack stack) {
+        return getAbilitiesData().getAbilities().keySet().stream().anyMatch(ability -> isAbilityUnlocked(stack, ability));
+    }
+
     default boolean canPlayerUseAbility(Player player, ItemStack stack, String ability) {
         return isAbilityUnlocked(stack, ability) && testAbilityPredicates(player, stack, ability, PredicateType.CAST) && getAbilityCooldown(stack, ability) <= 0;
     }
