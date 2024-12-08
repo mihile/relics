@@ -3,7 +3,6 @@ package it.hurts.sskirillss.relics.client.screen.description.experience;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import it.hurts.sskirillss.relics.badges.base.RelicBadge;
 import it.hurts.sskirillss.relics.client.screen.base.IAutoScaledScreen;
 import it.hurts.sskirillss.relics.client.screen.base.IHoverableWidget;
 import it.hurts.sskirillss.relics.client.screen.base.IPagedDescriptionScreen;
@@ -21,7 +20,6 @@ import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionUtil
 import it.hurts.sskirillss.relics.client.screen.description.relic.RelicDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.relic.widgets.RelicExperienceWidget;
 import it.hurts.sskirillss.relics.client.screen.utils.ScreenUtils;
-import it.hurts.sskirillss.relics.init.BadgeRegistry;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.data.AnimationData;
@@ -46,7 +44,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -125,17 +122,6 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         this.addRenderableWidget(new PointsPlateWidget(x + 313, y + 77, this));
         this.addRenderableWidget(new PlayerExperiencePlateWidget(x + 313, y + 102, this));
         this.addRenderableWidget(new LuckPlateWidget(x + 313, y + 127, this));
-
-        xOff = 0;
-
-        for (RelicBadge badge : BadgeRegistry.BADGES.getEntries().stream().map(DeferredHolder::get).filter(entry -> entry instanceof RelicBadge).map(entry -> (RelicBadge) entry).toList()) {
-            if (!badge.isVisible(stack))
-                continue;
-
-            this.addRenderableWidget(new RelicBadgeWidget(x + 270 - xOff, y + 63, this, badge));
-
-            xOff += 15;
-        }
 
         if (!sources.isEmpty()) {
             int gemWidth = 34;
