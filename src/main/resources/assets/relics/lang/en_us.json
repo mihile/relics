@@ -487,7 +487,7 @@
   "tooltip.relics.phantom_boot.ability.bridge": "Phantom Bridge",
   "tooltip.relics.phantom_boot.ability.bridge.description": "Creates a temporary phantom bridge beneath the player's feet that any relic owner can walk on. If the player stands still on the bridge for more than %1$s seconds, they will fall through and cannot get back up until they reach solid ground.",
   "tooltip.relics.phantom_boot.leveling_source.bridge.title": "Phantom Bridge",
-  "tooltip.relics.phantom_boot.leveling_source.bridge.description": "+%1$s experience points with a 10% chance each time a bridge is created using the %2$s ability.",
+  "tooltip.relics.phantom_boot.leveling_source.bridge.description": "+%1$s experience points with a 10%% chance each time a bridge is created using the %2$s ability.",
 
   "item.relics.springy_boot": "Springy Boot",
   "tooltip.relics.springy_boot.description": "Grants the relic owner special elasticity, allowing them to bounce off any solid surface.",
