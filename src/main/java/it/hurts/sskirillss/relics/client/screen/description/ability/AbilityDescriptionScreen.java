@@ -139,14 +139,14 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
         }
 
         if (!abilities.isEmpty()) {
-            int cardWidth = 32;
+            int objectWidth = 32;
             int containerWidth = 209;
 
             int count = Math.min(5, abilities.size());
 
-            int spacing = cardWidth + 8 + (3 * (5 - count));
+            int spacing = objectWidth + 8 + (3 * (5 - count));
 
-            xOff = (containerWidth / 2) - (((cardWidth * count) + ((spacing - cardWidth) * Math.max(count - 1, 0))) / 2);
+            xOff = (containerWidth / 2) - (((objectWidth * count) + ((spacing - objectWidth) * Math.max(count - 1, 0))) / 2);
 
             for (String entry : abilities.keySet()) {
                 this.addRenderableWidget(new AbilityCardWidget(x + 77 + xOff, y + 153, this, entry));

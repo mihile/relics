@@ -124,14 +124,14 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         this.addRenderableWidget(new LuckPlateWidget(x + 313, y + 127, this));
 
         if (!sources.isEmpty()) {
-            int gemWidth = 34;
+            int objectWidth = 32;
             int containerWidth = 209;
 
             int count = Math.min(5, sources.size());
 
-            int spacing = gemWidth + 8 + (3 * (5 - count));
+            int spacing = objectWidth + 8 + (3 * (5 - count));
 
-            xOff = (containerWidth / 2) - (((gemWidth * count) + ((spacing - gemWidth) * Math.max(count - 1, 0))) / 2);
+            xOff = (containerWidth / 2) - (((objectWidth * count) + ((spacing - objectWidth) * Math.max(count - 1, 0))) / 2);
 
             for (String entry : sources.keySet()) {
                 this.addRenderableWidget(new ExperienceGemWidget(x + 77 + xOff, y + 153, this, entry));
