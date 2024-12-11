@@ -6,13 +6,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import it.hurts.sskirillss.relics.badges.base.RelicBadge;
 import it.hurts.sskirillss.relics.client.screen.base.IAutoScaledScreen;
 import it.hurts.sskirillss.relics.client.screen.base.IHoverableWidget;
-import it.hurts.sskirillss.relics.client.screen.base.IRelicScreenProvider;
 import it.hurts.sskirillss.relics.client.screen.base.IPagedDescriptionScreen;
+import it.hurts.sskirillss.relics.client.screen.base.IRelicScreenProvider;
 import it.hurts.sskirillss.relics.client.screen.description.ability.AbilityDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.experience.ExperienceDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.general.misc.DescriptionPage;
 import it.hurts.sskirillss.relics.client.screen.description.general.widgets.*;
-import it.hurts.sskirillss.relics.client.screen.description.general.widgets.PageWidget;
 import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionTextures;
 import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionUtils;
 import it.hurts.sskirillss.relics.client.screen.description.relic.particles.ExperienceParticleData;
@@ -118,6 +117,13 @@ public class RelicDescriptionScreen extends Screen implements IAutoScaledScreen,
         }
 
         this.addRenderableWidget(new RelicExperienceWidget(x + 142, y + 121, this));
+    }
+
+    @Override
+    public void rebuildWidgets() {
+        stack = DescriptionUtils.gatherRelicStack(minecraft.player, slot);
+
+        super.rebuildWidgets();
     }
 
     @Override
@@ -247,11 +253,6 @@ public class RelicDescriptionScreen extends Screen implements IAutoScaledScreen,
         }
 
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
-    }
-
-    @Override
-    public void rebuildWidgets() {
-        super.rebuildWidgets();
     }
 
     @Override

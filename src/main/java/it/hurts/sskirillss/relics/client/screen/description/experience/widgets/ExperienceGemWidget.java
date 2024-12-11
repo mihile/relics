@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.hurts.sskirillss.relics.client.screen.base.IHoverableWidget;
 import it.hurts.sskirillss.relics.client.screen.base.ITickingWidget;
+import it.hurts.sskirillss.relics.client.screen.description.ability.widgets.AbilityCardWidget;
 import it.hurts.sskirillss.relics.client.screen.description.experience.ExperienceDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.general.widgets.base.AbstractDescriptionWidget;
 import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionTextures;
@@ -50,7 +51,20 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
 
     @Override
     public void onPress() {
+        if (screen.getSelectedSource().equals(source))
+            return;
+
         screen.setSelectedSource(source);
+
+        screen.rebuildWidgets();
+
+        for (var entry : screen.renderables) {
+            if (!(entry instanceof ExperienceGemWidget gem) || !gem.source.equals(source))
+                continue;
+
+            gem.scale = scale;
+            gem.scaleOld = scaleOld;
+        }
     }
 
     @Override

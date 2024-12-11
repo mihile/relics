@@ -165,6 +165,13 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
     }
 
     @Override
+    public void rebuildWidgets() {
+        stack = DescriptionUtils.gatherRelicStack(minecraft.player, slot);
+
+        super.rebuildWidgets();
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -391,11 +398,6 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
         }
 
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
-    }
-
-    @Override
-    public void rebuildWidgets() {
-        super.rebuildWidgets();
     }
 
     @Override

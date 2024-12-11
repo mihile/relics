@@ -151,6 +151,13 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
     }
 
     @Override
+    public void rebuildWidgets() {
+        stack = DescriptionUtils.gatherRelicStack(minecraft.player, slot);
+
+        super.rebuildWidgets();
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -375,11 +382,6 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         }
 
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
-    }
-
-    @Override
-    public void rebuildWidgets() {
-        super.rebuildWidgets();
     }
 
     @Override

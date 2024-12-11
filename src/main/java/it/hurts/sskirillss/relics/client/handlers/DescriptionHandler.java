@@ -5,6 +5,7 @@ import it.hurts.sskirillss.relics.api.events.common.TooltipDisplayEvent;
 import it.hurts.sskirillss.relics.client.screen.description.ability.AbilityDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.experience.ExperienceDescriptionScreen;
 import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionCache;
+import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionUtils;
 import it.hurts.sskirillss.relics.client.screen.description.relic.RelicDescriptionScreen;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import net.minecraft.ChatFormatting;
@@ -83,15 +84,7 @@ public class DescriptionHandler {
             ticksCount++;
 
             if (ticksCount >= REQUIRED_TIME) {
-                Screen descriptionScreen;
-
-                switch (DescriptionCache.getEntry(relic).getSelectedPage()) {
-                    case ABILITY -> descriptionScreen = new AbilityDescriptionScreen(player, player.containerMenu.containerId, id, screen);
-                    case EXPERIENCE -> descriptionScreen = new ExperienceDescriptionScreen(player, player.containerMenu.containerId, id, screen);
-                    default -> descriptionScreen = new RelicDescriptionScreen(player, player.containerMenu.containerId, id, screen);
-                }
-
-                Minecraft.getInstance().setScreen(descriptionScreen);
+                DescriptionUtils.openCachedScreen(relic, player, id, screen);
 
                 ticksCount = 0;
             }

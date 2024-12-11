@@ -1,8 +1,13 @@
 package it.hurts.sskirillss.relics.client.screen.description.misc;
 
+import it.hurts.sskirillss.relics.client.screen.description.ability.AbilityDescriptionScreen;
+import it.hurts.sskirillss.relics.client.screen.description.experience.ExperienceDescriptionScreen;
+import it.hurts.sskirillss.relics.client.screen.description.relic.RelicDescriptionScreen;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.utils.Reference;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,5 +51,17 @@ public class DescriptionUtils {
             return ItemStack.EMPTY;
 
         return stack;
+    }
+
+    public static void openCachedScreen(IRelicItem relic, Player player, int slot, Screen screen) {
+        Screen descriptionScreen;
+
+        switch (DescriptionCache.getEntry(relic).getSelectedPage()) {
+            case ABILITY -> descriptionScreen = new AbilityDescriptionScreen(player, player.containerMenu.containerId, slot, screen);
+            case EXPERIENCE -> descriptionScreen = new ExperienceDescriptionScreen(player, player.containerMenu.containerId, slot, screen);
+            default -> descriptionScreen = new RelicDescriptionScreen(player, player.containerMenu.containerId, slot, screen);
+        }
+
+        Minecraft.getInstance().setScreen(descriptionScreen);
     }
 }
