@@ -26,8 +26,8 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public class RerollAbilityActionWidget extends AbstractAbilityActionWidget {
-    public RerollAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen, String ability) {
-        super(x, y, PacketRelicTweak.Operation.REROLL, screen, ability);
+    public RerollAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen) {
+        super(x, y, PacketRelicTweak.Operation.REROLL, screen);
     }
 
     @Override

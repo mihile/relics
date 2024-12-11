@@ -145,8 +145,8 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         var source = getSelectedSource();
 
         if (relic.isLevelingSourceUnlocked(stack, source)) {
-            this.upgradeButton = this.addRenderableWidget(new UpgradeExperienceActionWidget(x + 288, y + 70, this, source));
-            this.resetButton = this.addRenderableWidget(new ResetExperienceActionWidget(x + 288, y + 90, this, source));
+            this.upgradeButton = this.addRenderableWidget(new UpgradeExperienceActionWidget(x + 288, y + 70, this));
+            this.resetButton = this.addRenderableWidget(new ResetExperienceActionWidget(x + 288, y + 90, this));
         }
     }
 

@@ -20,8 +20,8 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public class ResetAbilityActionWidget extends AbstractAbilityActionWidget {
-    public ResetAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen, String ability) {
-        super(x, y, PacketRelicTweak.Operation.RESET, screen, ability);
+    public ResetAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen) {
+        super(x, y, PacketRelicTweak.Operation.RESET, screen);
     }
 
     @Override

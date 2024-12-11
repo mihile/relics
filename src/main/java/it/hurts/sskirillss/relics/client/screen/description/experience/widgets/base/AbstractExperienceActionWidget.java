@@ -24,19 +24,20 @@ public abstract class AbstractExperienceActionWidget extends AbstractDescription
     private final PacketRelicTweak.Operation operation;
     @Getter
     private final ExperienceDescriptionScreen screen;
-    @Getter
-    private final String source;
 
-    public AbstractExperienceActionWidget(int x, int y, PacketRelicTweak.Operation operation, ExperienceDescriptionScreen screen, String source) {
+    public AbstractExperienceActionWidget(int x, int y, PacketRelicTweak.Operation operation, ExperienceDescriptionScreen screen) {
         super(x, y, 14, 13);
 
         this.operation = operation;
         this.screen = screen;
-        this.source = source;
     }
 
     @Override
     public abstract boolean isLocked();
+
+    public String getSource() {
+        return screen.getSelectedSource();
+    }
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {

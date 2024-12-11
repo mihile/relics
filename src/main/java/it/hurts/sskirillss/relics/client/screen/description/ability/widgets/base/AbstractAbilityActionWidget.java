@@ -25,19 +25,20 @@ public abstract class AbstractAbilityActionWidget extends AbstractDescriptionWid
     private final PacketRelicTweak.Operation operation;
     @Getter
     private final AbilityDescriptionScreen screen;
-    @Getter
-    private final String ability;
 
-    public AbstractAbilityActionWidget(int x, int y, PacketRelicTweak.Operation operation, AbilityDescriptionScreen screen, String ability) {
+    public AbstractAbilityActionWidget(int x, int y, PacketRelicTweak.Operation operation, AbilityDescriptionScreen screen) {
         super(x, y, 14, 13);
 
         this.operation = operation;
         this.screen = screen;
-        this.ability = ability;
     }
 
     @Override
     public abstract boolean isLocked();
+
+    public String getAbility() {
+        return screen.getSelectedAbility();
+    }
 
     @Override
     public void onPress() {

@@ -27,8 +27,8 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public class UpgradeExperienceActionWidget extends AbstractExperienceActionWidget {
-    public UpgradeExperienceActionWidget(int x, int y, ExperienceDescriptionScreen screen, String source) {
-        super(x, y, PacketRelicTweak.Operation.UPGRADE, screen, source);
+    public UpgradeExperienceActionWidget(int x, int y, ExperienceDescriptionScreen screen) {
+        super(x, y, PacketRelicTweak.Operation.UPGRADE, screen);
     }
 
     @Override

@@ -25,8 +25,8 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public class UpgradeAbilityActionWidget extends AbstractAbilityActionWidget {
-    public UpgradeAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen, String ability) {
-        super(x, y, PacketRelicTweak.Operation.UPGRADE, screen, ability);
+    public UpgradeAbilityActionWidget(int x, int y, AbilityDescriptionScreen screen) {
+        super(x, y, PacketRelicTweak.Operation.UPGRADE, screen);
     }
 
     @Override

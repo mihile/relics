@@ -18,8 +18,8 @@ import net.minecraft.util.FormattedCharSequence;
 import java.util.List;
 
 public class ResetExperienceActionWidget extends AbstractExperienceActionWidget {
-    public ResetExperienceActionWidget(int x, int y, ExperienceDescriptionScreen screen, String source) {
-        super(x, y, PacketRelicTweak.Operation.RESET, screen, source);
+    public ResetExperienceActionWidget(int x, int y, ExperienceDescriptionScreen screen) {
+        super(x, y, PacketRelicTweak.Operation.RESET, screen);
     }
 
     @Override
