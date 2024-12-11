@@ -225,7 +225,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
         poseStack.scale(0.75F, 0.75F, 1F);
 
-        var title = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".title", source);
+        var title = Component.translatableWithFallback(sourceData.getTranslationPath().apply(stack) + ".title", source);
 
         if (!relic.isLevelingSourceUnlocked(stack, source)) {
             title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), source.length());
@@ -283,7 +283,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
             var pattern = Pattern.compile("([^ .,!?;:]*%(1)\\$s[^ .,!?;:]*)");
 
-            for (var line : font.getSplitter().splitLines(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".description", "%1$s", title), 340, Style.EMPTY)) {
+            for (var line : font.getSplitter().splitLines(Component.translatable(sourceData.getTranslationPath().apply(stack) + ".description", "%1$s", title), 340, Style.EMPTY)) {
                 String unformattedLine = line.getString().replace("%%", "%");
 
                 int currentX = (x + 112) * 2;
@@ -340,7 +340,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
                     title
             );
 
-            var component = ScreenUtils.stylizeWidthReplacement(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), source.length());
+            var component = ScreenUtils.stylizeWidthReplacement(Component.translatable(sourceData.getTranslationPath().apply(stack) + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), source.length());
 
             for (FormattedCharSequence line : font.split(component, 340)) {
                 guiGraphics.drawString(font, line, (x + 112) * 2, (y + 74) * 2 + yOff, 0x662f13, false);

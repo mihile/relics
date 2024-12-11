@@ -67,7 +67,7 @@
   "tooltip.relics.researching.relic.info.extra_info": "Relic quality is the arithmetic average of all currently unlocked abilities' quality and is measured in points from 1 to 5 with a step of 0.5. It is purely a visual metric that shows how close the item's initial random characteristics are to the best possible. To improve the overall quality of the relic, each ability needs to be considered separately.",
 
   "tooltip.relics.researching.relic.experience.title": "Relic Experience:",
-  "tooltip.relics.researching.relic.experience.extra_info": "Earned by using the relic's abilities for their intended purpose, as well as gaining experience from other relics. When the maximum experience value is reached, the relic level and leveling points increase by 1, allowing you to unlock previously unavailable abilities or upgrade existing ones.",
+  "tooltip.relics.researching.relic.experience.extra_info": "Gained by using relic abilities as intended (more details can be found on the experience sources page). Upon reaching the maximum experience value, the relic's level and the pool of upgrade points increase by 1, allowing you to unlock previously unavailable abilities or enhance existing ones.",
 
   "tooltip.relics.researching.ability.info.level": "Ability Level:",
   "tooltip.relics.researching.ability.info.quality": "Ability Quality:",
@@ -495,6 +495,9 @@
   "tooltip.relics.springy_boot.ability.bounce.description": "Increases the elasticity of all blocks by %1$s%% compared to slime blocks, enabling the player to bounce off them upon landing. When activated on the ground, it launches the player into the air.",
   "tooltip.relics.springy_boot.leveling_source.bounce.title": "Elasticity",
   "tooltip.relics.springy_boot.leveling_source.bounce.description": "+%1$s experience points for each bounce off a surface using the %2$s ability.",
+
+  "tooltip.relics.leveling_source.generic.spreading.title": "Experience Spreading",
+  "tooltip.relics.leveling_source.generic.spreading.description": "Each time any relic in the inventory gains experience, regardless of the method, %1$s%% of that experience is also gained by this relic.",
 
   "item.relics.leafy_ring": "Leafy Ring [WIP]",
   "tooltip.relics.leafy_ring.description": "[WIP]",

@@ -7,6 +7,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOp
 import it.hurts.sskirillss.relics.utils.Reference;
 import lombok.Builder;
 import lombok.Data;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +28,11 @@ public class LevelingSourceData {
     }
 
     public static LevelingSourceDataBuilder genericBuilder(String id) {
-        return builder(id);
+        var builder = builder(id);
+
+        builder.translationPath((stack) -> "tooltip.relics.leveling_source.generic." + id);
+
+        return builder;
     }
 
     public static LevelingSourceDataBuilder abilityBuilder(String id, String ability) {
@@ -35,6 +40,7 @@ public class LevelingSourceData {
 
         builder.requiredAbility(ability);
         builder.abilityIcon(ability);
+        builder.translationPath((stack) -> "tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + id);
 
         return builder;
     }
@@ -63,12 +69,16 @@ public class LevelingSourceData {
     @Builder.Default
     private Function<ItemStack, ResourceLocation> icon;
     @Builder.Default
+    private Function<ItemStack, String> translationPath;
+    @Builder.Default
     private GemShape shape = GemShape.SQUARE;
     @Builder.Default
     private GemColor color = GemColor.RED;
 
     public static class LevelingSourceDataBuilder {
         private Function<ItemStack, ResourceLocation> icon = (stack) -> ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/abilities/missing.png");
+        private Function<ItemStack, String> translationPath = (stack) -> "";
+
         private Pair<UpgradeOperation, Integer> upgradeModifier = Pair.of(UpgradeOperation.ADD, 0);
 
         private LevelingSourceDataBuilder id(String id) {

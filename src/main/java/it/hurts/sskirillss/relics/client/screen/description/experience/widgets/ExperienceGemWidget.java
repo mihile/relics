@@ -163,7 +163,7 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
 
         List<FormattedCharSequence> tooltip = Lists.newArrayList();
 
-        var title = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".leveling_source." + source + ".title", source);
+        var title = Component.translatableWithFallback(data.getTranslationPath().apply(stack) + ".title", source);
 
         int maxWidth = 110;
         int renderWidth = Math.min((minecraft.font.width(title.withStyle(ChatFormatting.BOLD)) / 2) + 4, maxWidth);
@@ -179,7 +179,7 @@ public class ExperienceGemWidget extends AbstractDescriptionWidget implements IT
             entries.add(Component.literal(" "));
 
             entries.add(Component.literal("").append(Component.translatable("tooltip.relics.researching.relic.gem.low_level", Component.literal(String.valueOf(requiredLevel)).withStyle(ChatFormatting.BOLD))));
-        } else if (!relic.isAbilityUnlocked(stack, requiredAbility)) {
+        } else if (!requiredAbility.isEmpty() && !relic.isAbilityUnlocked(stack, requiredAbility)) {
             entries.add(Component.literal(" "));
 
             entries.add(Component.literal("").append(Component.translatable("tooltip.relics.researching.relic.gem.locked_ability")));
