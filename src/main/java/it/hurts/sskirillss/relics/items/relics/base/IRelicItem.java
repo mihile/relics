@@ -899,6 +899,10 @@ public interface IRelicItem {
         return isEnoughLevel(stack, ability) && isLockUnlocked(stack, ability) && isAbilityResearched(stack, ability);
     }
 
+    default boolean hasUnlockedUpgradeableAbility(ItemStack stack) {
+        return getAbilitiesData().getAbilities().keySet().stream().anyMatch(ability -> canBeUpgraded(ability) && isAbilityUnlocked(stack, ability));
+    }
+
     default boolean hasUnlockedAbility(ItemStack stack) {
         return getAbilitiesData().getAbilities().keySet().stream().anyMatch(ability -> isAbilityUnlocked(stack, ability));
     }

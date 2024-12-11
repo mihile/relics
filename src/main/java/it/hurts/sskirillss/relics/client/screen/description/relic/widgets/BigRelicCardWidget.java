@@ -50,7 +50,7 @@ public class BigRelicCardWidget extends AbstractDescriptionWidget implements IHo
 
         int xOff = 0;
 
-        if (relic.hasUnlockedAbility(stack)) {
+        if (relic.hasUnlockedUpgradeableAbility(stack)) {
             for (int i = 0; i < 5; i++) {
                 GUIRenderer.begin(DescriptionTextures.BIG_STAR_HOLE, poseStack)
                         .anchor(SpriteAnchor.TOP_LEFT)
@@ -110,7 +110,7 @@ public class BigRelicCardWidget extends AbstractDescriptionWidget implements IHo
 
         poseStack.popPose();
 
-        if (isHovered() && relic.hasUnlockedAbility(stack))
+        if (isHovered() && relic.hasUnlockedUpgradeableAbility(stack))
             GUIRenderer.begin(DescriptionTextures.BIG_CARD_FRAME_OUTLINE, poseStack)
                     .anchor(SpriteAnchor.TOP_LEFT)
                     .pos(getX() - 1, getY() - 1)
@@ -123,7 +123,7 @@ public class BigRelicCardWidget extends AbstractDescriptionWidget implements IHo
     public void onHovered(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         ItemStack stack = screen.getStack();
 
-        if (!(stack.getItem() instanceof IRelicItem relic) || !relic.hasUnlockedAbility(stack))
+        if (!(stack.getItem() instanceof IRelicItem relic) || !relic.hasUnlockedUpgradeableAbility(stack))
             return;
 
         var poseStack = guiGraphics.pose();
