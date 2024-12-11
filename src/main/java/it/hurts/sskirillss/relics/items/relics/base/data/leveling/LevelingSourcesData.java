@@ -22,7 +22,6 @@ public class LevelingSourcesData {
         // TODO: Replace static init with registry entry
         {
             var entry = LevelingSourceData.genericBuilder("spreading")
-                    .genericIcon("spreading")
                     .initialValue(25)
                     .gem(GemShape.OVAL, GemColor.YELLOW)
                     .build();

@@ -31,6 +31,7 @@ public class LevelingSourceData {
         var builder = builder(id);
 
         builder.translationPath((stack) -> "tooltip.relics.leveling_source.generic." + id);
+        builder.genericIcon(id);
 
         return builder;
     }
