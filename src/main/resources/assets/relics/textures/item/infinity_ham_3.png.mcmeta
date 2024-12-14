@@ -4,7 +4,7 @@
     "frames": [
 	        {
                 "index": 0,
-                "time": 200
+                "time": 2
             }, {
                 "index": 1,
                 "time": 2
@@ -20,13 +20,34 @@
             }, {
                 "index": 5,
                 "time": 2
-            }, {
+	        }, {
                 "index": 6,
                 "time": 2
             }, {
                 "index": 7,
                 "time": 2
+            }, {
+                "index": 8,
+                "time": 2
+            }, {
+                "index": 9,
+                "time": 2
+            }, {
+                "index": 10,
+                "time": 2
+            }, {
+                "index": 11,
+                "time": 2
+            }, {
+                "index": 12,
+                "time": 2
+            }, {
+                "index": 13,
+                "time": 2
+            }, {
+                "index": 14,
+                "time": 2
             }
-    ]
-  }
+		]
+    }
 }
