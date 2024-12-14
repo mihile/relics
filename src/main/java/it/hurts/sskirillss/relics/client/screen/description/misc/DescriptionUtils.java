@@ -53,6 +53,7 @@ public class DescriptionUtils {
         return stack;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void openCachedScreen(IRelicItem relic, Player player, int slot, Screen screen) {
         Screen descriptionScreen;
 
