@@ -79,16 +79,27 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
     }
 
     public String getSelectedSource() {
-        return DescriptionCache.getSelectedExperienceSource((IRelicItem) stack.getItem());
+        if (!(stack.getItem() instanceof IRelicItem relic))
+            return "";
+
+        return DescriptionCache.getSelectedExperienceSource(relic);
     }
 
     public void setSelectedSource(String source) {
-        DescriptionCache.setSelectedExperienceSource((IRelicItem) stack.getItem(), source);
+        if (!(stack.getItem() instanceof IRelicItem relic))
+            return;
+
+        DescriptionCache.setSelectedExperienceSource(relic, source);
     }
 
     @Override
     protected void init() {
         if (stack == null || !(stack.getItem() instanceof IRelicItem relic))
+            return;
+
+        var source = getSelectedSource();
+
+        if (relic.getLevelingSourceData(source) == null)
             return;
 
         updateCache(relic);
@@ -142,8 +153,6 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
 
         this.addRenderableWidget(new RelicExperienceWidget(x + 142, y + 121, this));
 
-        var source = getSelectedSource();
-
         if (relic.isLevelingSourceUnlocked(stack, source)) {
             this.upgradeButton = this.addRenderableWidget(new UpgradeExperienceActionWidget(x + 288, y + 70, this));
             this.resetButton = this.addRenderableWidget(new ResetExperienceActionWidget(x + 288, y + 90, this));
@@ -162,16 +171,6 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         super.tick();
 
         stack = DescriptionUtils.gatherRelicStack(minecraft.player, slot);
-
-        LocalPlayer player = minecraft.player;
-
-        if (player == null || stack == null || !(stack.getItem() instanceof IRelicItem))
-            return;
-
-        RandomSource random = player.getRandom();
-
-        int x = (this.width - backgroundWidth) / 2;
-        int y = (this.height - backgroundHeight) / 2;
     }
 
     @Override

@@ -79,11 +79,17 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
     }
 
     public String getSelectedAbility() {
-        return DescriptionCache.getSelectedAbility((IRelicItem) stack.getItem());
+        if (!(stack.getItem() instanceof IRelicItem relic))
+            return "";
+
+        return DescriptionCache.getSelectedAbility(relic);
     }
 
     public void setSelectedAbility(String ability) {
-        DescriptionCache.setSelectedAbility((IRelicItem) stack.getItem(), ability);
+        if (!(stack.getItem() instanceof IRelicItem relic))
+            return;
+
+        DescriptionCache.setSelectedAbility(relic, ability);
     }
 
     @Override
@@ -91,9 +97,12 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
         if (stack == null || !(stack.getItem() instanceof IRelicItem relic))
             return;
 
-        updateCache(relic);
-
         var ability = getSelectedAbility();
+
+        if (relic.getAbilityData(ability) == null)
+            return;
+
+        updateCache(relic);
 
         int x = (this.width - backgroundWidth) / 2;
         int y = (this.height - backgroundHeight) / 2;
@@ -176,18 +185,6 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
         super.tick();
 
         stack = DescriptionUtils.gatherRelicStack(minecraft.player, slot);
-
-        var ability = getSelectedAbility();
-
-        var player = minecraft.player;
-
-        if (player == null || stack == null || !(stack.getItem() instanceof IRelicItem relic))
-            return;
-
-        var random = player.getRandom();
-
-        int x = (this.width - backgroundWidth) / 2;
-        int y = (this.height - backgroundHeight) / 2;
     }
 
     @Override
@@ -200,6 +197,9 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
             return;
 
         var ability = getSelectedAbility();
+
+        if (relic.getAbilityData(ability) == null)
+            return;
 
         RelicData relicData = relic.getRelicData();
 
