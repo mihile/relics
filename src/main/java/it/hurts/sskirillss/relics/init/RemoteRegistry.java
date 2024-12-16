@@ -46,7 +46,7 @@ public class RemoteRegistry {
 
         event.enqueueWork(() -> {
             ItemProperties.register(ItemRegistry.INFINITY_HAM.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "pieces"),
-                    (stack, world, entity, id) -> Math.min(8, stack.getOrDefault(CHARGE, 0)));
+                    (stack, world, entity, id) -> Math.min(10, stack.getOrDefault(CHARGE, 0)));
             ItemProperties.register(ItemRegistry.SHADOW_GLAIVE.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "charges"),
                     (stack, world, entity, id) -> Math.min(8, stack.getOrDefault(CHARGE, 0)));
             ItemProperties.register(ItemRegistry.MAGIC_MIRROR.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "world"),
