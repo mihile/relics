@@ -306,7 +306,13 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
 
             var pattern = Pattern.compile("([^ .,!?;:]*%(\\d+)\\$s[^ .,!?;:]*)");
 
-            for (var line : font.getSplitter().splitLines(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability + ".description"), 340, Style.EMPTY)) {
+            // This is a crutchy workaround to fix issue caused by other unknown mod, that replaces placeholders without replacements to empty string
+            List<String> replacements = new ArrayList<>();
+
+            for (int i = 1; i < 10; i++)
+                replacements.add("%" + i + "$s");
+
+            for (var line : font.getSplitter().splitLines(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability + ".description", replacements.toArray()).getString(), 340, Style.EMPTY)) {
                 String unformattedLine = line.getString().replace("%%", "%");
 
                 int currentX = (x + 112) * 2;
