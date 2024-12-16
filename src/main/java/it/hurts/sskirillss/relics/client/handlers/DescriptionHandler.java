@@ -32,7 +32,7 @@ public class DescriptionHandler {
 
     private static int ticksCount;
 
-    private static int width;
+    private static int width = 175;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -136,11 +136,11 @@ public class DescriptionHandler {
         return component;
     }
 
-    @SubscribeEvent
-    public static void onTooltipDisplay(TooltipDisplayEvent event) {
-        if (!(event.getStack().getItem() instanceof IRelicItem))
-            return;
-
-        width = event.getWidth();
-    }
+//    @SubscribeEvent
+//    public static void onTooltipDisplay(TooltipDisplayEvent event) {
+//        if (!(event.getStack().getItem() instanceof IRelicItem))
+//            return;
+//
+//        width = event.getWidth();
+//    }
 }
