@@ -60,26 +60,27 @@ public class InfiniteHamItem extends RelicItem {
         return RelicData.builder()
                 .abilities(AbilitiesData.builder()
                         .ability(AbilityData.builder("regeneration")
+                                .requiredPoints(2)
                                 .stat(StatData.builder("cooldown")
-                                        .initialValue(10D, 15D)
-                                        .upgradeModifier(UpgradeOperation.ADD, -1D)
+                                        .initialValue(30D, 15D)
+                                        .upgradeModifier(UpgradeOperation.ADD, -0.5D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("feed")
-                                        .initialValue(1D, 2D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
+                                        .initialValue(1D, 3D)
+                                        .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .build())
                         .ability(AbilityData.builder("marinade")
                                 .requiredLevel(5)
                                 .stat(StatData.builder("duration")
-                                        .initialValue(3D, 5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25D)
+                                        .initialValue(1D, 3D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .build())
-                        .ability(AbilityData.builder("bat")
+                        .ability(AbilityData.builder("meat_bat")
                                 .requiredLevel(10)
                                 .stat(StatData.builder("damage")
                                         .initialValue(0.5D, 2D)
@@ -87,8 +88,8 @@ public class InfiniteHamItem extends RelicItem {
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("stun")
-                                        .initialValue(0.1D, 0.3D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
+                                        .initialValue(0.05D, 0.25D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
                                 .build())
@@ -106,7 +107,7 @@ public class InfiniteHamItem extends RelicItem {
                                         .initialValue(1)
                                         .gem(GemShape.SQUARE, GemColor.YELLOW)
                                         .build())
-                                .source(LevelingSourceData.abilityBuilder("bat")
+                                .source(LevelingSourceData.abilityBuilder("meat_bat")
                                         .initialValue(1)
                                         .gem(GemShape.SQUARE, GemColor.YELLOW)
                                         .build())
@@ -135,8 +136,8 @@ public class InfiniteHamItem extends RelicItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
-        if (!(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration")
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
+        if (level.isClientSide() || !(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration")
                 || entityIn.tickCount % (int) (getStatValue(stack, "regeneration", "cooldown") * 20) != 0)
             return;
 
@@ -147,14 +148,15 @@ public class InfiniteHamItem extends RelicItem {
 
         stack.set(CHARGE, ++charge);
 
-        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+        super.inventoryTick(stack, level, entityIn, itemSlot, isSelected);
     }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0 && player.getFoodData().needsFood()) {
+        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0
+                && player.getFoodData().needsFood() && player.getAttackStrengthScale(0) == 1F) {
             player.startUsingItem(hand);
 
             return InteractionResultHolder.pass(stack);
@@ -177,22 +179,12 @@ public class InfiniteHamItem extends RelicItem {
 
         var eaten = (int) (properties.nutrition() / getStatValue(stack, "regeneration", "feed"));
 
-        stack.set(CHARGE, stack.getOrDefault(CHARGE, 0) - eaten);
+        if (eaten > 0) {
+            stack.set(CHARGE, Math.max(0, stack.getOrDefault(CHARGE, 0) - eaten));
 
-        if (!canPlayerUseAbility(player, stack, "marinade"))
-            return stack;
-
-        var contents = stack.get(DataComponents.POTION_CONTENTS);
-
-        if (contents == null)
-            return stack;
-
-        var duration = (int) Math.round(getStatValue(stack, "marinade", "duration") * 20);
-
-        contents.forEachEffect(effect -> {
-            if (!effect.getEffect().value().isInstantenous())
-                player.addEffect(new MobEffectInstance(effect.getEffect(), duration, effect.getAmplifier()));
-        });
+            if (isLevelingSourceUnlocked(stack, "regeneration"))
+                spreadRelicExperience(player, stack, eaten);
+        }
 
         return stack;
     }
@@ -209,10 +201,18 @@ public class InfiniteHamItem extends RelicItem {
 
         var nutrition = (int) Math.min(charge * getStatValue(stack, "regeneration", "feed"), 20 - player.getFoodData().getFoodLevel());
 
-        return new FoodProperties.Builder()
+        var builder = new FoodProperties.Builder()
                 .nutrition(nutrition)
-                .saturationModifier(nutrition / 5F)
-                .build();
+                .saturationModifier(nutrition / 5F);
+
+        if (canPlayerUseAbility(player, stack, "marinade")) {
+            var contents = stack.get(DataComponents.POTION_CONTENTS);
+
+            if (contents != null)
+                contents.forEachEffect(effect -> builder.effect(() -> new MobEffectInstance(effect.getEffect(), (int) (nutrition * getStatValue(stack, "marinade", "duration") * 20), effect.getAmplifier()), 1F));
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -244,7 +244,8 @@ public class InfiniteHamItem extends RelicItem {
 
             var stack = player.getMainHandItem();
 
-            if (!(stack.getItem() instanceof InfiniteHamItem relic) || !relic.canPlayerUseAbility(player, stack, "bat"))
+            if (!(stack.getItem() instanceof InfiniteHamItem relic) || !relic.canPlayerUseAbility(player, stack, "meat_bat")
+                    || player.getAttackStrengthScale(0) != 1F)
                 return;
 
             var charge = stack.getOrDefault(CHARGE, 0);
@@ -252,11 +253,11 @@ public class InfiniteHamItem extends RelicItem {
             if (charge <= 0)
                 return;
 
-            if (relic.isLevelingSourceUnlocked(stack, "bat"))
+            if (relic.isLevelingSourceUnlocked(stack, "meat_bat"))
                 relic.spreadRelicExperience(player, stack, charge);
 
-            event.setAmount((float) (event.getAmount() + (relic.getStatValue(stack, "bat", "damage") * charge)));
-            event.getEntity().addEffect(new MobEffectInstance(EffectRegistry.STUN, (int) Math.round(relic.getStatValue(stack, "bat", "stun") * charge * 20), 0));
+            event.setAmount((float) (event.getAmount() + (relic.getStatValue(stack, "meat_bat", "damage") * charge)));
+            event.getEntity().addEffect(new MobEffectInstance(EffectRegistry.STUN, (int) Math.round(relic.getStatValue(stack, "meat_bat", "stun") * charge * 20), 0));
         }
 
         @SubscribeEvent
@@ -279,11 +280,6 @@ public class InfiniteHamItem extends RelicItem {
             if (effects.isEmpty())
                 slotStack.set(DataComponents.POTION_CONTENTS, null);
             else {
-                effects = effects.stream().filter(effect -> !effect.getEffect().value().isInstantenous()).toList();
-
-                if (effects.isEmpty())
-                    return;
-
                 slotStack.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.empty(), effects));
 
                 if (relic.isLevelingSourceUnlocked(slotStack, "marinade"))

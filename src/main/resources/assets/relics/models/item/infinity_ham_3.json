@@ -1,7 +1,21 @@
 {
-  "parent": "item/generated",
-    "textures": {
-        "layer0": "relics:item/infinity_ham_3"
+  "parent": "neoforge:item/default",
+  "base": {
+    "parent": "relics:item/infinity_ham_3_3d"
+  },
+  "textures": {
+    "particle": "relics:item/infinity_ham_3"
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "ground": {
+      "parent": "relics:item/infinity_ham_3_2d"
+    },
+    "gui": {
+      "parent": "relics:item/infinity_ham_3_2d"
+    },
+    "fixed": {
+      "parent": "relics:item/infinity_ham_3_2d"
     }
+  }
 }
-
