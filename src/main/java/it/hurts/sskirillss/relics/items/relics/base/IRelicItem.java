@@ -6,6 +6,7 @@ import com.google.common.collect.MultimapBuilder;
 import io.netty.util.internal.UnstableApi;
 import it.hurts.sskirillss.relics.api.events.leveling.ExperienceAddEvent;
 import it.hurts.sskirillss.relics.components.*;
+import it.hurts.sskirillss.relics.config.data.RelicConfigData;
 import it.hurts.sskirillss.relics.entities.RelicExperienceOrbEntity;
 import it.hurts.sskirillss.relics.init.DataComponentRegistry;
 import it.hurts.sskirillss.relics.init.EntityRegistry;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -49,6 +51,13 @@ public interface IRelicItem {
     }
 
     RelicData constructDefaultRelicData();
+
+    String getConfigRoute();
+
+    @Nullable
+    default RelicConfigData constructDefaultConfigData(@NotNull RelicConfigData config) {
+        return config;
+    }
 
     default void castActiveAbility(ItemStack stack, Player player, String ability, CastType type, CastStage stage) {
 
