@@ -41,6 +41,7 @@ import java.util.stream.StreamSupport;
 import static it.hurts.sskirillss.relics.init.DataComponentRegistry.CHARGE;
 import static it.hurts.sskirillss.relics.init.DataComponentRegistry.TIME;
 
+// TODO: Rename to InfiniteHam
 public class InfinityHamItem extends RelicItem {
     public InfinityHamItem() {
         super(new Item.Properties()
@@ -52,7 +53,7 @@ public class InfinityHamItem extends RelicItem {
     public RelicData constructDefaultRelicData() {
         return RelicData.builder()
                 .abilities(AbilitiesData.builder()
-                        .ability(AbilityData.builder("autophagy")
+                        .ability(AbilityData.builder("regeneration")
                                 .stat(StatData.builder("feed")
                                         .initialValue(1D, 2D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
@@ -101,7 +102,7 @@ public class InfinityHamItem extends RelicItem {
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
-        if (entityIn.tickCount % 20 != 0 || !(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "autophagy"))
+        if (entityIn.tickCount % 20 != 0 || !(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration"))
             return;
 
         int pieces = stack.getOrDefault(CHARGE, 0);
@@ -124,7 +125,7 @@ public class InfinityHamItem extends RelicItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (canPlayerUseAbility(player, stack, "autophagy") && stack.getOrDefault(CHARGE, 0) > 0 && player.getFoodData().needsFood())
+        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0 && player.getFoodData().needsFood())
             player.startUsingItem(hand);
 
         return super.use(world, player, hand);
@@ -132,7 +133,7 @@ public class InfinityHamItem extends RelicItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (!(entity instanceof Player player) || !canPlayerUseAbility(player, stack, "autophagy"))
+        if (!(entity instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration"))
             return stack;
 
         player.eat(level, stack.copy());
@@ -154,9 +155,9 @@ public class InfinityHamItem extends RelicItem {
 
     @Override
     public @Nullable FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
-        return entity instanceof Player player && canPlayerUseAbility(player, stack, "autophagy")
+        return entity instanceof Player player && canPlayerUseAbility(player, stack, "regeneration")
                 ? new FoodProperties.Builder()
-                .nutrition((int) Math.min(stack.getOrDefault(CHARGE, 0) * getStatValue(stack, "autophagy", "feed"), 20 - player.getFoodData().getFoodLevel()))
+                .nutrition((int) Math.min(stack.getOrDefault(CHARGE, 0) * getStatValue(stack, "regeneration", "feed"), 20 - player.getFoodData().getFoodLevel()))
                 .build()
                 : super.getFoodProperties(stack, entity);
     }
