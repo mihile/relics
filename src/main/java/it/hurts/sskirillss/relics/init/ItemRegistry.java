@@ -56,7 +56,7 @@ public class ItemRegistry {
     public static final DeferredHolder<Item, RelicItem> SPORE_SACK = ITEMS.register("spore_sack", SporeSackItem::new);
     public static final DeferredHolder<Item, RelicItem> SHADOW_GLAIVE = ITEMS.register("shadow_glaive", ShadowGlaiveItem::new);
     public static final DeferredHolder<Item, RelicItem> ROLLER_SKATES = ITEMS.register("roller_skates", RollerSkatesItem::new);
-    public static final DeferredHolder<Item, RelicItem> INFINITY_HAM = ITEMS.register("infinity_ham", InfinityHamItem::new);
+    public static final DeferredHolder<Item, RelicItem> INFINITY_HAM = ITEMS.register("infinity_ham", InfiniteHamItem::new); // TODO: Replace ID with "infinite_ham"
     public static final DeferredHolder<Item, RelicItem> LEATHER_BELT = ITEMS.register("leather_belt", LeatherBeltItem::new);
     // TODO: public static final DeferredHolder<Item, RelicItem> HORSE_FLUTE = ITEMS.register("horse_flute", HorseFluteItem::new);
     public static final DeferredHolder<Item, RelicItem> WOOL_MITTEN = ITEMS.register("wool_mitten", WoolMittenItem::new);
