@@ -98,7 +98,7 @@
   "tooltip.relics.infinity_ham.ability.marinade": "Marinade",
   "tooltip.relics.infinity_ham.ability.marinade.description": "Allows applying potion effects to the relic by left-clicking it with a potion in the inventory. Each time the relic is consumed, it applies these effects to the player for %1$s seconds per hunger point restored. Using a water bottle clears the last applied potion effects.",
   "tooltip.relics.infinity_ham.ability.meat_bat": "Meat Bat",
-  "tooltip.relics.infinity_ham.ability.meat_bat.description": "Enables the relic to be used as a melee weapon, dealing %1$s damage and stunning the target for %2$s seconds per edible chunk. This ability works only if the attack is performed with a fully charged attack speed.",
+  "tooltip.relics.infinity_ham.ability.meat_bat.description": "Allows the relic to be used as a melee weapon, dealing %1$s damage and stunning the target for %2$s seconds per chunk. Consumes all chunks when attacking, regardless of the target's remaining health.",
   "tooltip.relics.infinity_ham.leveling_source.regeneration.title": "Regeneration",
   "tooltip.relics.infinity_ham.leveling_source.regeneration.description": "+%1$s experience points for each chunk consumed through the %2$s ability.",
   "tooltip.relics.infinity_ham.leveling_source.marinade.title": "Marinade",

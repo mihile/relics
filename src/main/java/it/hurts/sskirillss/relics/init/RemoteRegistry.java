@@ -1,14 +1,15 @@
 package it.hurts.sskirillss.relics.init;
 
 import it.hurts.sskirillss.relics.client.gui.layers.ActiveAbilitiesLayer;
-import it.hurts.sskirillss.relics.client.gui.layers.LeafyRingHideLayer;
 import it.hurts.sskirillss.relics.client.gui.layers.InfoTileLayer;
+import it.hurts.sskirillss.relics.client.gui.layers.LeafyRingHideLayer;
 import it.hurts.sskirillss.relics.client.gui.layers.PhantomBootBridgeLayer;
 import it.hurts.sskirillss.relics.client.models.items.CurioModel;
 import it.hurts.sskirillss.relics.client.models.layers.WingsLayer;
 import it.hurts.sskirillss.relics.client.renderer.entities.*;
 import it.hurts.sskirillss.relics.client.renderer.items.items.CurioRenderer;
 import it.hurts.sskirillss.relics.client.renderer.tiles.ResearchingTableRenderer;
+import it.hurts.sskirillss.relics.items.relics.InfiniteHamItem;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.IRenderableCurio;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
@@ -46,7 +47,7 @@ public class RemoteRegistry {
 
         event.enqueueWork(() -> {
             ItemProperties.register(ItemRegistry.INFINITY_HAM.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "pieces"),
-                    (stack, world, entity, id) -> Math.min(8, stack.getOrDefault(CHARGE, 0)));
+                    (stack, world, entity, id) -> ((InfiniteHamItem) stack.getItem()).getPieces(stack));
             ItemProperties.register(ItemRegistry.SHADOW_GLAIVE.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "charges"),
                     (stack, world, entity, id) -> Math.min(8, stack.getOrDefault(CHARGE, 0)));
             ItemProperties.register(ItemRegistry.MAGIC_MIRROR.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "world"),

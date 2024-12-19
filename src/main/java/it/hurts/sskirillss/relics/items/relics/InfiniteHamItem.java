@@ -22,16 +22,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -49,9 +45,6 @@ public class InfiniteHamItem extends RelicItem {
     public InfiniteHamItem() {
         super(new Item.Properties()
                 .stacksTo(1)
-                .attributes(ItemAttributeModifiers.builder()
-                        .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.5F, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                        .build())
                 .rarity(Rarity.RARE));
     }
 
@@ -130,7 +123,7 @@ public class InfiniteHamItem extends RelicItem {
     public void gatherCreativeTabContent(CreativeContentConstructor constructor) {
         ItemStack stack = this.getDefaultInstance();
 
-        stack.set(CHARGE, 6);
+        setPieces(stack, getMaxPieces());
 
         constructor.entry(CreativeTabRegistry.RELICS_TAB.get(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, stack);
     }
@@ -143,7 +136,7 @@ public class InfiniteHamItem extends RelicItem {
 
         int charge = stack.getOrDefault(CHARGE, 0);
 
-        if (charge >= 6)
+        if (charge >= getMaxPieces())
             return;
 
         stack.set(CHARGE, ++charge);
@@ -155,8 +148,7 @@ public class InfiniteHamItem extends RelicItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0
-                && player.getFoodData().needsFood() && player.getAttackStrengthScale(0) == 1F) {
+        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0 && player.getFoodData().needsFood()) {
             player.startUsingItem(hand);
 
             return InteractionResultHolder.pass(stack);
@@ -177,10 +169,10 @@ public class InfiniteHamItem extends RelicItem {
 
         player.eat(level, stack.copy());
 
-        var eaten = (int) (properties.nutrition() / getStatValue(stack, "regeneration", "feed"));
+        var eaten = (int) Math.ceil(properties.nutrition() / getStatValue(stack, "regeneration", "feed"));
 
         if (eaten > 0) {
-            stack.set(CHARGE, Math.max(0, stack.getOrDefault(CHARGE, 0) - eaten));
+            addPieces(stack, -eaten);
 
             if (isLevelingSourceUnlocked(stack, "regeneration"))
                 spreadRelicExperience(player, stack, eaten);
@@ -194,12 +186,12 @@ public class InfiniteHamItem extends RelicItem {
         if (!(entity instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration"))
             return super.getFoodProperties(stack, entity);
 
-        var charge = stack.getOrDefault(CHARGE, 0);
+        var charge = getPieces(stack);
 
         if (charge == 0)
             return null;
 
-        var nutrition = (int) Math.min(charge * getStatValue(stack, "regeneration", "feed"), 20 - player.getFoodData().getFoodLevel());
+        var nutrition = Math.min((int) Math.ceil(charge * getStatValue(stack, "regeneration", "feed")), 20 - player.getFoodData().getFoodLevel());
 
         var builder = new FoodProperties.Builder()
                 .nutrition(nutrition)
@@ -235,6 +227,22 @@ public class InfiniteHamItem extends RelicItem {
         return false;
     }
 
+    public int getMaxPieces() {
+        return 6;
+    }
+
+    public int getPieces(ItemStack stack) {
+        return Math.clamp(stack.getOrDefault(CHARGE, 0), 0, getMaxPieces());
+    }
+
+    public void setPieces(ItemStack stack, int amount) {
+        stack.set(CHARGE, Math.clamp(amount, 0, getMaxPieces()));
+    }
+
+    public void addPieces(ItemStack stack, int amount) {
+        setPieces(stack, getPieces(stack) + amount);
+    }
+
     @EventBusSubscriber
     public static class InfinityHamEvents {
         @SubscribeEvent
@@ -244,11 +252,10 @@ public class InfiniteHamItem extends RelicItem {
 
             var stack = player.getMainHandItem();
 
-            if (!(stack.getItem() instanceof InfiniteHamItem relic) || !relic.canPlayerUseAbility(player, stack, "meat_bat")
-                    || player.getAttackStrengthScale(0) != 1F)
+            if (!(stack.getItem() instanceof InfiniteHamItem relic) || !relic.canPlayerUseAbility(player, stack, "meat_bat"))
                 return;
 
-            var charge = stack.getOrDefault(CHARGE, 0);
+            var charge = relic.getPieces(stack);
 
             if (charge <= 0)
                 return;
@@ -258,6 +265,8 @@ public class InfiniteHamItem extends RelicItem {
 
             event.setAmount((float) (event.getAmount() + (relic.getStatValue(stack, "meat_bat", "damage") * charge)));
             event.getEntity().addEffect(new MobEffectInstance(EffectRegistry.STUN, (int) Math.round(relic.getStatValue(stack, "meat_bat", "stun") * charge * 20), 0));
+
+            stack.set(CHARGE, 0);
         }
 
         @SubscribeEvent

@@ -97,7 +97,7 @@
   "tooltip.relics.infinity_ham.ability.marinade": "Маринад",
   "tooltip.relics.infinity_ham.ability.marinade.description": "При нажатии ЛКМ зельем по реликвии в инвентаре позволяет применить на неё эффекты этого зелья. При каждом поедании реликвии применяет на игрока эти эффекты на %1$s секунд за каждую восполненную единицу голода. Применение бутылочки с водой очистит последние эффекты зелья.",
   "tooltip.relics.infinity_ham.ability.meat_bat": "Мясная бита",
-  "tooltip.relics.infinity_ham.ability.meat_bat.description": "Позволяет использовать реликвию как оружие ближнего боя, нанося %1$s единиц урона и оглушая цель на %2$s секунд за каждый съедобный кусочек. Работает только если атака была совершена при полностью заряженной скорости атаки.",
+  "tooltip.relics.infinity_ham.ability.meat_bat.description": "Позволяет использовать реликвию как оружие ближнего боя, нанося %1$s единиц урона и оглушая цель на %2$s секунд за каждый кусочек. Расходует все кусочки при совершении атаки вне зависимости от того, сколько здоровья было у моба.",
   "tooltip.relics.infinity_ham.leveling_source.regeneration.title": "Регенерация",
   "tooltip.relics.infinity_ham.leveling_source.regeneration.description": "+%1$s единиц опыта за каждый съеденный кусочек от способности %2$s.",
   "tooltip.relics.infinity_ham.leveling_source.marinade.title": "Маринад",
