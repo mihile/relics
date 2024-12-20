@@ -45,6 +45,8 @@ public class InfiniteHamItem extends RelicItem {
     public InfiniteHamItem() {
         super(new Item.Properties()
                 .stacksTo(1)
+                .food(new FoodProperties.Builder()
+                        .build())
                 .rarity(Rarity.RARE));
     }
 
@@ -148,10 +150,10 @@ public class InfiniteHamItem extends RelicItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (canPlayerUseAbility(player, stack, "regeneration") && stack.getOrDefault(CHARGE, 0) > 0 && player.getFoodData().needsFood()) {
+        if (canPlayerUseAbility(player, stack, "regeneration") && getPieces(stack) > 0 && player.getFoodData().needsFood()) {
             player.startUsingItem(hand);
 
-            return InteractionResultHolder.pass(stack);
+            return InteractionResultHolder.consume(stack);
         }
 
         return InteractionResultHolder.pass(stack);
