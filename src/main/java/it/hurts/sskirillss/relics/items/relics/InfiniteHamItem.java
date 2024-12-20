@@ -16,7 +16,12 @@ import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,9 +31,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -36,7 +44,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.SlotContext;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static it.hurts.sskirillss.relics.init.DataComponentRegistry.CHARGE;
@@ -45,8 +55,7 @@ public class InfiniteHamItem extends RelicItem {
     public InfiniteHamItem() {
         super(new Item.Properties()
                 .stacksTo(1)
-                .food(new FoodProperties.Builder()
-                        .build())
+                .food(new FoodProperties.Builder().build())
                 .rarity(Rarity.RARE));
     }
 
@@ -243,6 +252,54 @@ public class InfiniteHamItem extends RelicItem {
 
     public void addPieces(ItemStack stack, int amount) {
         setPieces(stack, getPieces(stack) + amount);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        var contents = stack.get(DataComponents.POTION_CONTENTS);
+
+        return contents == null ? Optional.empty() : Optional.of(new InfiniteHamTooltip(StreamSupport.stream(contents.getAllEffects().spliterator(), false).collect(Collectors.toList())));
+    }
+
+    public record InfiniteHamTooltip(List<MobEffectInstance> effects) implements TooltipComponent {
+
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public record ClientInfiniteHamTooltip(InfiniteHamTooltip tooltip) implements ClientTooltipComponent {
+        @Override
+        public int getHeight() {
+            return tooltip.effects().size() * 11;
+        }
+
+        @Override
+        public int getWidth(Font font) {
+            return 100;
+        }
+
+        @Override
+        public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics guiGraphics) {
+            var yOff = 0;
+
+            for (MobEffectInstance effect : tooltip.effects()) {
+                var holder = effect.getEffect();
+
+                var manager = Minecraft.getInstance().getMobEffectTextures();
+
+                guiGraphics.blit(mouseX, mouseY + yOff, 0, 10, 10, manager.get(holder));
+
+                var name = Component.translatable(effect.getDescriptionId());
+
+                if (effect.getAmplifier() > 0)
+                    name = Component.translatable("potion.withAmplifier", name, Component.translatable("potion.potency." + effect.getAmplifier()));
+
+                name.withStyle(holder.value().getCategory().getTooltipFormatting());
+
+                guiGraphics.drawString(font, name, mouseX + 12, mouseY + 2 + yOff, 0xFFFFFF);
+
+                yOff += 11;
+            }
+        }
     }
 
     @EventBusSubscriber
