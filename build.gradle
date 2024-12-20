@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.142'
+    id 'net.neoforged.gradle.userdev' version '7.0.170'
     id 'io.freefair.lombok' version '8.4'
 }
 
@@ -89,6 +89,26 @@ dependencies {
     implementation "dev.architectury:architectury-neoforge:13.0.6"
 
     implementation "dev.emi:emi-neoforge:1.1.12+1.21"
+
+    if (file("libs").isDirectory()) {
+        file("libs").eachFile { file ->
+            def splitPos = file.name.lastIndexOf("-")
+
+            if (file.name != "desktop.ini") {
+                println file.name
+
+                def modartifact = file.name.substring(0, splitPos)
+                def modversion = file.name.substring(splitPos + 1, file.name.length() - 4)
+                def modreference = "lib:$modartifact:$modversion"
+
+                dependencies {
+                    implementation (project.dependencies.create(modreference) {
+                        transitive = false
+                    })
+                }
+            }
+        }
+    } else file("libs").mkdir()
 }
 
 tasks.withType(ProcessResources).configureEach {
