@@ -195,7 +195,7 @@ public class InfiniteHamItem extends RelicItem {
 
         var builder = new FoodProperties.Builder()
                 .nutrition(nutrition)
-                .saturationModifier(nutrition / 5F);
+                .saturationModifier(nutrition / 3F);
 
         if (canPlayerUseAbility(player, stack, "marinade")) {
             var contents = stack.get(DataComponents.POTION_CONTENTS);
