@@ -312,52 +312,56 @@ public interface IRelicItem {
     }
 
     default boolean addRelicExperience(@Nullable LivingEntity entity, ItemStack stack, int amount) {
-        ExperienceAddEvent event = new ExperienceAddEvent(entity instanceof LivingEntity ? entity : null, stack, amount);
+        var event = new ExperienceAddEvent(entity instanceof LivingEntity ? entity : null, stack, amount);
 
         NeoForge.EVENT_BUS.post(event);
 
-        if (!event.isCanceled()) {
-            int currentExperience = getRelicExperience(stack);
-            int currentLevel = getRelicLevel(stack);
+        if (event.isCanceled())
+            return false;
 
-            int toAdd = event.getAmount();
+        var currentExperience = getRelicExperience(stack);
+        var currentLevel = getRelicLevel(stack);
 
-            int resultLevel = currentLevel;
-            int resultExperience = 0;
+        var toAdd = event.getAmount();
 
-            while (toAdd > 0) {
-                if (resultLevel >= getLevelingData().getMaxLevel())
-                    break;
+        if (toAdd == 0)
+            return false;
 
-                int requiredExperience = getTotalRelicExperienceBetweenLevels(resultLevel, resultLevel + 1);
+        var resultLevel = currentLevel;
+        var resultExperience = 0;
 
-                int diff = requiredExperience - currentExperience;
+        var maxLevel = getLevelingData().getMaxLevel();
 
-                if (toAdd >= diff) {
-                    toAdd -= diff;
+        while (toAdd > 0) {
+            if (resultLevel >= maxLevel)
+                break;
 
-                    resultLevel++;
+            var requiredExperience = getTotalRelicExperienceBetweenLevels(resultLevel, resultLevel + 1);
 
-                    currentExperience = 0;
-                } else {
-                    resultExperience = currentExperience + toAdd;
+            var diff = requiredExperience - currentExperience;
 
-                    break;
-                }
+            if (toAdd >= diff) {
+                toAdd -= diff;
+
+                resultLevel++;
+
+                currentExperience = 0;
+            } else {
+                resultExperience = currentExperience + toAdd;
+
+                break;
             }
-
-            setRelicExperience(stack, resultExperience);
-
-            if (currentLevel != resultLevel) {
-                setRelicLevel(stack, resultLevel);
-
-                addRelicLevelingPoints(stack, resultLevel - currentLevel);
-            }
-
-            return true;
         }
 
-        return false;
+        setRelicExperience(stack, resultExperience);
+
+        if (currentLevel != resultLevel) {
+            setRelicLevel(stack, resultLevel);
+
+            addRelicLevelingPoints(stack, resultLevel - currentLevel);
+        }
+
+        return true;
     }
 
     default void spreadRelicExperience(@Nullable LivingEntity entity, ItemStack stack, int experience) {
