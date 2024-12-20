@@ -81,4 +81,9 @@ public abstract class RelicItem extends ItemBase implements ICurioItem, IRelicIt
     public void gatherCreativeTabContent(CreativeContentConstructor constructor) {
         constructor.entry(CreativeTabRegistry.RELICS_TAB.get(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, this);
     }
+
+    @Override
+    public String getConfigRoute() {
+        return Reference.MODID;
+    }
 }

@@ -33,7 +33,7 @@ public interface IRenderableCurio {
 
         assert id != null;
 
-        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/models/items/" + id.getPath() + ".png");
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/item/model/" + id.getPath() + ".png");
     }
 
     default List<String> headParts() {
