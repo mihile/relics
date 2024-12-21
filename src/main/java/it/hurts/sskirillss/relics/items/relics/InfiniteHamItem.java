@@ -161,7 +161,7 @@ public class InfiniteHamItem extends RelicItem {
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
         if (level.isClientSide() || !(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration")
-                || entityIn.tickCount % (int) (getStatValue(stack, "regeneration", "cooldown") * 20) != 0 || getPieces(stack) >= getMaxPieces())
+                || entityIn.tickCount % (int) Math.max(1, getStatValue(stack, "regeneration", "cooldown") * 20) != 0 || getPieces(stack) >= getMaxPieces())
             return;
 
         addPieces(stack, 1);
