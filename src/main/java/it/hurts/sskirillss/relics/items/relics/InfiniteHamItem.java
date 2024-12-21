@@ -113,6 +113,7 @@ public class InfiniteHamItem extends RelicItem {
                                         .star(3, 17, 14).star(4, 10, 17).star(5, 3, 19)
                                         .star(6, 9, 24).star(7, 18, 24)
                                         .link(1, 4).link(4, 0).link(4, 2).link(4, 3).link(4, 5).link(4, 6).link(4, 7)
+                                        .link(0, 3).link(3, 7).link(7, 6).link(6, 5).link(5, 2).link(2, 0).link(2, 0)
                                         .build())
                                 .build())
                         .build())
