@@ -12,6 +12,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemShape;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
+import it.hurts.sskirillss.relics.items.relics.base.data.research.ResearchData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
@@ -75,6 +76,11 @@ public class InfiniteHamItem extends RelicItem {
                                         .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
+                                .research(ResearchData.builder()
+                                        .star(0, 8, 7).star(1, 19, 7).star(2, 5, 15)
+                                        .star(3, 10, 16).star(4, 17, 20).star(5, 7, 24)
+                                        .link(1, 3).link(3, 0).link(3, 2).link(3, 4).link(3, 5)
+                                        .build())
                                 .build())
                         .ability(AbilityData.builder("marinade")
                                 .requiredLevel(5)
@@ -82,6 +88,12 @@ public class InfiniteHamItem extends RelicItem {
                                         .initialValue(1D, 3D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> MathUtils.round(value, 1))
+                                        .build())
+                                .research(ResearchData.builder()
+                                        .star(0, 18, 5).star(1, 8, 7).star(2, 4, 16)
+                                        .star(3, 17, 16).star(4, 10, 21).star(5, 17, 23)
+                                        .star(6, 5, 25).star(7, 10, 29)
+                                        .link(0, 1).link(0, 3).link(1, 3).link(1, 2).link(3, 4).link(2, 4).link(3, 5).link(4, 7).link(2, 6)
                                         .build())
                                 .build())
                         .ability(AbilityData.builder("meat_bat")
@@ -96,6 +108,12 @@ public class InfiniteHamItem extends RelicItem {
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
+                                .research(ResearchData.builder()
+                                        .star(0, 10, 5).star(1, 18, 7).star(2, 3, 9)
+                                        .star(3, 17, 14).star(4, 10, 17).star(5, 3, 19)
+                                        .star(6, 9, 24).star(7, 18, 24)
+                                        .link(1, 4).link(4, 0).link(4, 2).link(4, 3).link(4, 5).link(4, 6).link(4, 7)
+                                        .build())
                                 .build())
                         .build())
                 .leveling(LevelingData.builder()
@@ -105,15 +123,15 @@ public class InfiniteHamItem extends RelicItem {
                         .sources(LevelingSourcesData.builder()
                                 .source(LevelingSourceData.abilityBuilder("regeneration")
                                         .initialValue(1)
-                                        .gem(GemShape.SQUARE, GemColor.YELLOW)
+                                        .gem(GemShape.SQUARE, GemColor.ORANGE)
                                         .build())
                                 .source(LevelingSourceData.abilityBuilder("marinade")
                                         .initialValue(1)
-                                        .gem(GemShape.SQUARE, GemColor.YELLOW)
+                                        .gem(GemShape.SQUARE, GemColor.ORANGE)
                                         .build())
                                 .source(LevelingSourceData.abilityBuilder("meat_bat")
                                         .initialValue(1)
-                                        .gem(GemShape.SQUARE, GemColor.YELLOW)
+                                        .gem(GemShape.SQUARE, GemColor.ORANGE)
                                         .build())
                                 .build())
                         .build())
@@ -142,17 +160,10 @@ public class InfiniteHamItem extends RelicItem {
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entityIn, int itemSlot, boolean isSelected) {
         if (level.isClientSide() || !(entityIn instanceof Player player) || !canPlayerUseAbility(player, stack, "regeneration")
-                || entityIn.tickCount % (int) (getStatValue(stack, "regeneration", "cooldown") * 20) != 0)
+                || entityIn.tickCount % (int) (getStatValue(stack, "regeneration", "cooldown") * 20) != 0 || getPieces(stack) >= getMaxPieces())
             return;
 
-        int charge = stack.getOrDefault(CHARGE, 0);
-
-        if (charge >= getMaxPieces())
-            return;
-
-        stack.set(CHARGE, ++charge);
-
-        super.inventoryTick(stack, level, entityIn, itemSlot, isSelected);
+        addPieces(stack, 1);
     }
 
     @Override
@@ -325,7 +336,7 @@ public class InfiniteHamItem extends RelicItem {
             event.setAmount((float) (event.getAmount() + (relic.getStatValue(stack, "meat_bat", "damage") * charge)));
             event.getEntity().addEffect(new MobEffectInstance(EffectRegistry.STUN, (int) Math.round(relic.getStatValue(stack, "meat_bat", "stun") * charge * 20), 0));
 
-            stack.set(CHARGE, 0);
+            relic.setPieces(stack, 0);
         }
 
         @SubscribeEvent
