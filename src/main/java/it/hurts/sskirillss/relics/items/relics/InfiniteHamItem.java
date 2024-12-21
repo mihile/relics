@@ -224,7 +224,13 @@ public class InfiniteHamItem extends RelicItem {
             var contents = stack.get(DataComponents.POTION_CONTENTS);
 
             if (contents != null)
-                contents.forEachEffect(effect -> builder.effect(() -> new MobEffectInstance(effect.getEffect(), (int) (nutrition * getStatValue(stack, "marinade", "duration") * 20), effect.getAmplifier()), 1F));
+                contents.forEachEffect(effect -> {
+                    var holder = effect.getEffect();
+                    var isInstant = holder.value().isInstantenous();
+
+                    builder.effect(() -> new MobEffectInstance(holder, isInstant ? 0 : (int) (nutrition * getStatValue(stack, "marinade", "duration") * 20),
+                            effect.getAmplifier(), !isInstant && effect.isAmbient(), !isInstant && effect.isVisible(), !isInstant && effect.showIcon()), 1F);
+                });
         }
 
         return builder.build();
