@@ -33,6 +33,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
@@ -144,10 +145,10 @@ public class RemoteRegistry {
         event.registerBlockEntityRenderer(TileRegistry.RESEARCHING_TABLE.get(), ResearchingTableRenderer::new);
     }
 
-//    @SubscribeEvent
-//    public static void onTooltipRegistry(RegisterClientTooltipComponentFactoriesEvent event) {
-//        event.register(ArrowQuiverTooltip.class, ClientArrowQuiverTooltip::new);
-//    }
+    @SubscribeEvent
+    public static void onTooltipRegistry(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(InfiniteHamItem.InfiniteHamTooltip.class, InfiniteHamItem.ClientInfiniteHamTooltip::new);
+    }
 
     @SubscribeEvent
     public static void onOverlayRegistry(RegisterGuiLayersEvent event) {

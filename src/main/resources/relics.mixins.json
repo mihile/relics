@@ -14,7 +14,9 @@
     "LivingEntityMixin",
     "PiglinAiMixin",
     "PowderSnowBlockMixin",
-    "ScreenMixin"
+    "ScreenMixin",
+    "compat.sophisticatedbackpacks.FeedingUpgradeWrapperMixin",
+    "compat.sophisticatedbackpacks.UpgradeWrapperBaseAccessor"
   ],
   "minVersion": "0.8",
   "client": [
