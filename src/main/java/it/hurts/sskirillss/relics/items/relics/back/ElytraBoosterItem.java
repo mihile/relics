@@ -154,7 +154,7 @@ public class ElytraBoosterItem extends RelicItem implements IRenderableCurio {
 
     @Override
     public ResourceLocation getTexture(ItemStack stack) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/models/items/elytra_booster_" + (stack.getOrDefault(CHARGE, 0) > 0 ? 1 : 0) + ".png");
+        return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/item/model/elytra_booster_" + (stack.getOrDefault(CHARGE, 0) > 0 ? 1 : 0) + ".png");
     }
 
     @Override
