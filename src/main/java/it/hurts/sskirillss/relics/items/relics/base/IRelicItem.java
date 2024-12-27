@@ -16,7 +16,6 @@ import it.hurts.sskirillss.relics.items.relics.base.data.RelicData;
 import it.hurts.sskirillss.relics.items.relics.base.data.RelicSlotModifier;
 import it.hurts.sskirillss.relics.items.relics.base.data.RelicStorage;
 import it.hurts.sskirillss.relics.items.relics.base.data.cast.CastData;
-import it.hurts.sskirillss.relics.items.relics.base.data.cast.containers.base.RelicContainer;
 import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.CastStage;
 import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.CastType;
 import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.PredicateType;
@@ -369,9 +368,9 @@ public interface IRelicItem {
     }
 
     default void spreadRelicExperience(@Nullable LivingEntity entity, ItemStack stack, int experience, double percentage) {
-        boolean isMaxLevel = isRelicMaxLevel(stack);
+        var isMaxLevel = isRelicMaxLevel(stack);
 
-        int toSpread = isMaxLevel ? experience : (int) Math.ceil(experience * percentage);
+        var toSpread = isMaxLevel ? 0 : (int) Math.ceil(experience * percentage);
 
         if (!isMaxLevel)
             addRelicExperience(entity, stack, experience);
@@ -379,15 +378,16 @@ public interface IRelicItem {
         if (toSpread <= 0 || entity == null)
             return;
 
-        List<ItemStack> relics = new ArrayList<>();
-
-        for (RelicContainer source : RegistryRegistry.RELIC_CONTAINER_REGISTRY.entrySet().stream().map(Map.Entry::getValue).toList())
-            relics.addAll(source.gatherRelics().apply(entity).stream().filter(entry -> !isRelicMaxLevel(entry) && !stack.equals(entry)).toList());
+        var relics = RegistryRegistry.RELIC_CONTAINER_REGISTRY.entrySet().stream()
+                .map(Map.Entry::getValue)
+                .flatMap(source -> source.gatherRelics().apply(entity).stream())
+                .filter(entry -> entry.getItem() instanceof IRelicItem relic && !relic.isRelicMaxLevel(entry) && !stack.equals(entry))
+                .toList();
 
         if (relics.isEmpty())
             return;
 
-        ItemStack relicStack = relics.get(entity.level().getRandom().nextInt(relics.size()));
+        var relicStack = relics.get(entity.level().getRandom().nextInt(relics.size()));
 
         if (relicStack.getItem() instanceof IRelicItem relic)
             relic.addRelicExperience(entity, relicStack, toSpread);
@@ -476,7 +476,7 @@ public interface IRelicItem {
     }
 
     default boolean isRelicFlawless(ItemStack stack) {
-        return isRelicMaxLevel(stack) && isRelicMaxQuality(stack);
+        return isRelicMaxLevel(stack) && getAbilitiesData().getAbilities().keySet().stream().allMatch(ability -> isAbilityFlawless(stack, ability));
     }
 
     default boolean isAbilityMaxLevel(ItemStack stack, String ability) {
@@ -488,7 +488,7 @@ public interface IRelicItem {
     }
 
     default boolean isAbilityFlawless(ItemStack stack, String ability) {
-        return isAbilityMaxLevel(stack, ability) && isAbilityMaxQuality(stack, ability);
+        return isAbilityUnlocked(stack, ability) && isAbilityMaxLevel(stack, ability) && isAbilityMaxQuality(stack, ability);
     }
 
     default CastData getAbilityCastData(String ability) {

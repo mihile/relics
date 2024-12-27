@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -228,7 +229,7 @@ public class InfiniteHamItem extends RelicItem {
                     var holder = effect.getEffect();
                     var isInstant = holder.value().isInstantenous();
 
-                    builder.effect(() -> new MobEffectInstance(holder, isInstant ? 0 : (int) (nutrition * getStatValue(stack, "marinade", "duration") * 20),
+                    builder.effect(() -> new MobEffectInstance(holder, isInstant ? 1 : (int) (nutrition * getStatValue(stack, "marinade", "duration") * 20),
                             effect.getAmplifier(), !isInstant && effect.isAmbient(), !isInstant && effect.isVisible(), !isInstant && effect.showIcon()), 1F);
                 });
         }
@@ -324,7 +325,9 @@ public class InfiniteHamItem extends RelicItem {
     public static class InfinityHamEvents {
         @SubscribeEvent
         public static void onLivingDamage(LivingIncomingDamageEvent event) {
-            if (!(event.getSource().getDirectEntity() instanceof Player player))
+            var source = event.getSource();
+
+            if (!(source.getDirectEntity() instanceof Player player) || !source.is(DamageTypeTags.IS_PLAYER_ATTACK))
                 return;
 
             var stack = player.getMainHandItem();
