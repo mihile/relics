@@ -143,7 +143,7 @@
   "item.relics.magic_mirror": "매직 미러",
   "tooltip.relics.magic_mirror.description": "«웜홀» 능력 사용 시마다 경험치 +1\n순간이동 지점까지 50블록마다 경험치 +1",
   "tooltip.relics.magic_mirror.ability.teleport": "웜홀",
-  "tooltip.relics.magic_mirror.ability.teleport.description": "사용 후 사용자를 리스폰 지점으로 순간이동 시킵니다.",
+  "tooltip.relics.magic_mirror.ability.teleport.description": "사용자를 리스폰 지점으로 순간이동 시킵니다.",
   "tooltip.relics.magic_mirror.ability.teleport.stat.distance.title": "거리:",
   "tooltip.relics.magic_mirror.ability.teleport.stat.distance.value": "%1$s 블록",
   "tooltip.relics.magic_mirror.ability.teleport.stat.cooldown.title": "재충전:",
