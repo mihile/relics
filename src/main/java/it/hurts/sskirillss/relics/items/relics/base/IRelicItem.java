@@ -476,7 +476,7 @@ public interface IRelicItem {
     }
 
     default boolean isRelicFlawless(ItemStack stack) {
-        return isRelicMaxLevel(stack) && isRelicMaxQuality(stack);
+        return isRelicMaxLevel(stack) && getAbilitiesData().getAbilities().keySet().stream().allMatch(ability -> isAbilityFlawless(stack, ability));
     }
 
     default boolean isAbilityMaxLevel(ItemStack stack, String ability) {
@@ -488,7 +488,7 @@ public interface IRelicItem {
     }
 
     default boolean isAbilityFlawless(ItemStack stack, String ability) {
-        return isAbilityMaxLevel(stack, ability) && isAbilityMaxQuality(stack, ability);
+        return isAbilityUnlocked(stack, ability) && isAbilityMaxLevel(stack, ability) && isAbilityMaxQuality(stack, ability);
     }
 
     default CastData getAbilityCastData(String ability) {

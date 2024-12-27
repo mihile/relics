@@ -10,7 +10,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -143,5 +146,28 @@ public class RenderUtils {
         matrix.popPose();
 
         BufferUploader.drawWithShader(builder.buildOrThrow());
+    }
+
+    public static void renderFlatBeam(PoseStack matrixStack, MultiBufferSource bufferIn, float partialTicks, float length, float width, int startColor, int endColor) {
+        var builder = bufferIn.getBuffer(RenderType.dragonRays());
+        var matrix4f = matrixStack.last().pose();
+
+        int startRed = (startColor >> 16) & 0xFF;
+        int startGreen = (startColor >> 8) & 0xFF;
+        int startBlue = startColor & 0xFF;
+        int startAlpha = Mth.clamp((int) (((startColor >> 24) & 0xFF) * (1F - partialTicks / 200F)), 0, 255);
+
+        int endRed = (endColor >> 16) & 0xFF;
+        int endGreen = (endColor >> 8) & 0xFF;
+        int endBlue = endColor & 0xFF;
+        int endAlpha = Mth.clamp((int) (((endColor >> 24) & 0xFF) * (1F - partialTicks / 200F)), 0, 255);
+
+        builder.addVertex(matrix4f, 0F, 0F, 0F).setColor(startRed, startGreen, startBlue, startAlpha);
+        builder.addVertex(matrix4f, width / 2F, length, 0F).setColor(endRed, endGreen, endBlue, endAlpha);
+        builder.addVertex(matrix4f, -width / 2F, length, 0F).setColor(endRed, endGreen, endBlue, endAlpha);
+
+        builder.addVertex(matrix4f, 0F, 0F, 0F).setColor(startRed, startGreen, startBlue, startAlpha);
+        builder.addVertex(matrix4f, -width / 2F, length, 0F).setColor(endRed, endGreen, endBlue, endAlpha);
+        builder.addVertex(matrix4f, width / 2F, length, 0F).setColor(endRed, endGreen, endBlue, endAlpha);
     }
 }
