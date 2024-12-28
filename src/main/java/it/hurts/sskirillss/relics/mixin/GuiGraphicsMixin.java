@@ -41,7 +41,6 @@ public class GuiGraphicsMixin {
         var guiGraphics = (GuiGraphics) (Object) this;
 
         var poseStack = guiGraphics.pose();
-        var bufferSource = guiGraphics.bufferSource();
 
         var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
@@ -59,7 +58,7 @@ public class GuiGraphicsMixin {
 
             var length = 0.85F + ((i % 2 == 0 ? Math.sin(time * 0.25F) : Math.cos(time * 0.25F)) * 0.1F);
 
-            RenderUtils.renderFlatBeam(poseStack, bufferSource, partialTicks, (float) length, 0.45F, 0xFFFFFF00, 0x00FF0000);
+            RenderUtils.renderFlatBeam(guiGraphics, partialTicks, (float) length, 0.45F, 0xFFFFFF00, 0x00FF0000);
 
             poseStack.popPose();
         }
