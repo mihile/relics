@@ -488,7 +488,7 @@ public interface IRelicItem {
     }
 
     default boolean isAbilityFlawless(ItemStack stack, String ability) {
-        return isAbilityUnlocked(stack, ability) && isAbilityMaxLevel(stack, ability) && isAbilityMaxQuality(stack, ability);
+        return isAbilityUnlocked(stack, ability) && isAbilityMaxQuality(stack, ability);
     }
 
     default CastData getAbilityCastData(String ability) {
