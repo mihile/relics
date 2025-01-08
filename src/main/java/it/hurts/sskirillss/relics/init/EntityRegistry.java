@@ -54,12 +54,6 @@ public class EntityRegistry {
                     .build("spore")
     );
 
-    public static final DeferredHolder<EntityType<?>, EntityType<ShadowSawEntity>> SHADOW_SAW = ENTITIES.register("shadow_saw", () ->
-            EntityType.Builder.<ShadowSawEntity>of(ShadowSawEntity::new, MobCategory.MISC)
-                    .sized(2F, 0.5F)
-                    .build("shadow_saw")
-    );
-
     public static final DeferredHolder<EntityType<?>, EntityType<SolidSnowballEntity>> SOLID_SNOWBALL = ENTITIES.register("solid_snowball", () ->
             EntityType.Builder.<SolidSnowballEntity>of(SolidSnowballEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
