@@ -1,12 +1,15 @@
 package it.hurts.sskirillss.relics.entities;
 
+import it.hurts.octostudios.octolib.modules.particles.OctoRenderManager;
+import it.hurts.octostudios.octolib.modules.particles.trail.TrailProvider;
+import it.hurts.sskirillss.relics.entities.misc.ITargetableEntity;
 import it.hurts.sskirillss.relics.init.EntityRegistry;
-import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
+import it.hurts.sskirillss.relics.network.NetworkHandler;
+import it.hurts.sskirillss.relics.network.packets.sync.S2CEntityTargetPacket;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,186 +19,191 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-public class ShadowGlaiveEntity extends ThrowableProjectile {
+public class ShadowGlaiveEntity extends ThrowableProjectile implements ITargetableEntity, TrailProvider {
+    private static final EntityDataAccessor<Integer> MAX_BOUNCES = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> BOUNCES = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<String> TARGET = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.STRING);
-    private static final EntityDataAccessor<String> BOUNCED_ENTITIES = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.STRING);
-
-    private static final String TAG_BOUNCES_AMOUNT = "bounces";
-    private static final String TAG_TARGET_UUID = "target";
-    private static final String TAG_BOUNCED_ENTITIES = "entities";
-
-    private boolean isBounced = false;
-    private LivingEntity target;
+    private static final EntityDataAccessor<Float> DAMAGE = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> CHANCE = SynchedEntityData.defineId(ShadowGlaiveEntity.class, EntityDataSerializers.FLOAT);
 
     @Getter
-    @Setter
-    private ItemStack stack = ItemStack.EMPTY;
+    private Set<String> bouncedTargets = new HashSet<>();
 
-    public ShadowGlaiveEntity(EntityType<? extends ShadowGlaiveEntity> type, Level worldIn) {
-        super(type, worldIn);
+    @Nullable
+    private LivingEntity currentTarget = null;
+    @Nullable
+    private LivingEntity lastTarget = null;
+
+    public ShadowGlaiveEntity(EntityType<? extends ShadowGlaiveEntity> type, Level level) {
+        super(type, level);
     }
 
-    public ShadowGlaiveEntity(Level world, LivingEntity throwerIn) {
-        super(EntityRegistry.SHADOW_GLAIVE.get(), throwerIn, world);
+    public void setMaxBounces(int maxBounces) {
+        this.getEntityData().set(MAX_BOUNCES, maxBounces);
     }
 
-    public void setTarget(LivingEntity target) {
-        this.target = target;
-
-        if (target != null)
-            entityData.set(TARGET, target.getUUID().toString());
+    public int getMaxBounces() {
+        return this.getEntityData().get(MAX_BOUNCES);
     }
 
-    private void locateNearestTarget() {
-        if (!(stack.getItem() instanceof IRelicItem relic))
-            return;
+    public void setBounces(int bounces) {
+        this.getEntityData().set(BOUNCES, bounces);
+    }
 
-        if (entityData.get(BOUNCES) >= relic.getStatValue(stack, "glaive", "bounces")) {
-            this.discard();
+    public int getBounces() {
+        return this.getEntityData().get(BOUNCES);
+    }
 
-            return;
-        }
+    public void addBounces(int bounces) {
+        setBounces(Math.clamp(getBounces() + bounces, 0, getMaxBounces()));
+    }
 
-        List<String> bouncedEntities = Arrays.asList(entityData.get(BOUNCED_ENTITIES).split(","));
-        List<LivingEntity> entitiesAround = level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(relic.getStatValue(stack, "glaive", "radius")));
+    public void setDamage(float damage) {
+        this.getEntityData().set(DAMAGE, damage);
+    }
 
-        entitiesAround = entitiesAround.stream()
-                .filter(entity -> !bouncedEntities.contains(entity.getUUID().toString()))
-                .filter(EntitySelector.NO_CREATIVE_OR_SPECTATOR)
-                .filter(entity -> {
-                    if (!(this.getOwner() instanceof Player player))
-                        return false;
+    public float getDamage() {
+        return this.getEntityData().get(DAMAGE);
+    }
 
-                    return !entity.getStringUUID().equals(player.getStringUUID())
-                            && !EntityUtils.isAlliedTo(player, entity);
-                })
-                .filter(entity -> entity.hasLineOfSight(this))
+    public void setChance(float chance) {
+        this.getEntityData().set(CHANCE, chance);
+    }
+
+    public float getChance() {
+        return this.getEntityData().get(CHANCE);
+    }
+
+    public List<LivingEntity> locateNearestTargets() {
+        return this.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(16D)).stream()
                 .sorted(Comparator.comparing(entity -> entity.position().distanceTo(this.position())))
-                .collect(Collectors.toList());
-
-        if (entitiesAround.isEmpty()) {
-            if (isBounced)
-                this.discard();
-
-            return;
-        }
-
-        LivingEntity target = null;
-
-        for (LivingEntity entity : entitiesAround) {
-            if (entity == null || !entity.isAlive())
-                continue;
-
-            target = entity;
-
-            break;
-        }
-
-        if (target == null || !target.isAlive()) {
-            this.discard();
-
-            return;
-        }
-
-        this.setTarget(target);
+                .filter(entity -> (lastTarget == null || !lastTarget.getStringUUID().equals(entity.getStringUUID()))
+                        && !entity.isDeadOrDying()
+                        && entity.hasLineOfSight(this)
+                        && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity))
+                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity))
+                .toList();
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (!(stack.getItem() instanceof IRelicItem relic))
-            return;
+        var level = getCommandSenderWorld();
 
-        for (int i = 0; i < 3; i++)
-            level().addParticle(ParticleUtils.constructSimpleSpark(new Color(255, random.nextInt(100), 255), 0.2F, 30, 0.99F),
-                    this.xo, this.yo, this.zo, MathUtils.randomFloat(random) * 0.01F, 0, MathUtils.randomFloat(random) * 0.01F);
+        var particleCenter = this.position().add(this.getDeltaMovement().scale(-1F));
 
-        if (level().isClientSide())
-            return;
+        for (int i = 0; i < 5; i++)
+            level.addParticle(ParticleUtils.constructSimpleSpark(new Color(50 + random.nextInt(100), 0, 150 + random.nextInt(100)), 0.1F + random.nextFloat() * 0.15F, 5 + random.nextInt(10), 0.85F),
+                    particleCenter.x() + MathUtils.randomFloat(random) * 0.25F, particleCenter.y(), particleCenter.z() + MathUtils.randomFloat(random) * 0.25F, 0F, 0F, 0F);
 
-        if (!isBounced && target == null && this.tickCount > 30)
-            this.discard();
+        var currentTarget = getTarget();
 
-        if (this.tickCount > 300)
-            this.discard();
+        if (currentTarget != null && this.position().distanceTo(currentTarget.position()) >= 16F)
+            currentTarget = null;
 
-        if (target == null && this.tickCount > 10 && this.tickCount % 2 == 0) {
-            this.locateNearestTarget();
+        if (!level.isClientSide()) {
+            LivingEntity potentialTarget = null;
+
+            var candidateEntities = locateNearestTargets();
+
+            var targetEntities = candidateEntities.stream()
+                    .filter(entity -> !bouncedTargets.contains(entity.getStringUUID()))
+                    .toList();
+
+            if (!targetEntities.isEmpty())
+                potentialTarget = targetEntities.getFirst();
+            else if (!candidateEntities.isEmpty()) {
+                bouncedTargets.clear();
+
+                potentialTarget = candidateEntities.getFirst();
+            }
+
+            if (potentialTarget != null && (currentTarget == null || !currentTarget.getStringUUID().equals(potentialTarget.getStringUUID()))) {
+                NetworkHandler.sendToClientsTrackingEntity(new S2CEntityTargetPacket(this.getId(), potentialTarget.getId()), this);
+
+                setTarget(potentialTarget);
+
+                currentTarget = potentialTarget;
+            }
+        }
+
+        if (currentTarget == null || currentTarget.isDeadOrDying() || this.tickCount >= 250 || getBounces() >= getMaxBounces()) {
+            if (!level.isClientSide())
+                this.discard();
 
             return;
         }
 
-        if (target != null && target.isAlive()) {
-            EntityUtils.moveTowardsPosition(this, target.position()
-                    .add(0D, target.getBbHeight() * 0.5D, 0D), 0.75F);
+        if (this.getEyePosition().distanceTo(currentTarget.getEyePosition()) <= 1.5F) {
+            currentTarget.invulnerableTime = 0;
 
-            for (LivingEntity entity : level().getEntitiesOfClass(LivingEntity.class,
-                    this.getBoundingBox().inflate(0.3D, 3D, 0.3D))) {
-                if (this.getOwner() instanceof Player player && entity.getStringUUID().equals(player.getStringUUID()))
-                    continue;
+            if (currentTarget.hurt(level.damageSources().thrown(this, getOwner()), getDamage())) {
+                bouncedTargets.add(currentTarget.getStringUUID());
+                lastTarget = currentTarget;
 
-                String bouncedEntitiesString = entityData.get(BOUNCED_ENTITIES);
-                List<String> bouncedEntities = Arrays.asList(bouncedEntitiesString.split(","));
+                setTarget(null);
+                addBounces(1);
 
-                float damage = (float) relic.getStatValue(stack, "glaive", "damage");
+                if (random.nextDouble() <= getChance()) {
+                    var entity = new ShadowGlaiveEntity(EntityRegistry.SHADOW_GLAIVE.get(), level);
 
-                if (this.getOwner() instanceof Player player) {
-                    if (EntityUtils.hurt(entity, level().damageSources().thrown(this, player), damage))
-                        relic.spreadRelicExperience(player, stack, 1);
-                } else
-                    entity.hurt(level().damageSources().magic(), damage);
+                    entity.setMaxBounces(getMaxBounces());
+                    entity.setBounces(getBounces());
+                    entity.setPos(getEyePosition());
+                    entity.setDamage(getDamage());
+                    entity.setOwner(getOwner());
 
-                if (!bouncedEntities.contains(entity.getUUID().toString())) {
-                    entityData.set(BOUNCED_ENTITIES, bouncedEntitiesString + "," + entity.getUUID());
-
-                    entityData.set(BOUNCES, entityData.get(BOUNCES) + 1);
-
-                    isBounced = true;
+                    level.addFreshEntity(entity);
                 }
-
-                this.locateNearestTarget();
-
-                break;
             }
-        } else
-            this.locateNearestTarget();
+        } else {
+            this.setDeltaMovement(currentTarget.getEyePosition().subtract(this.getEyePosition()).normalize());
+        }
+    }
+
+    @Override
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
+
+        OctoRenderManager.registerProvider(this);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(MAX_BOUNCES, 10);
         builder.define(BOUNCES, 0);
-        builder.define(TARGET, "");
-        builder.define(BOUNCED_ENTITIES, "");
+        builder.define(DAMAGE, 1F);
+        builder.define(CHANCE, -1F);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
-        tag.putInt(TAG_BOUNCES_AMOUNT, entityData.get(BOUNCES));
-        tag.putString(TAG_TARGET_UUID, entityData.get(TARGET));
-        tag.putString(TAG_BOUNCED_ENTITIES, entityData.get(BOUNCED_ENTITIES));
-
         super.addAdditionalSaveData(tag);
+
+        tag.putInt("max_bounces", getMaxBounces());
+        tag.putInt("bounces", getBounces());
+        tag.putFloat("damage", getDamage());
+        tag.putFloat("chance", getChance());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
-        entityData.set(BOUNCES, tag.getInt(TAG_BOUNCES_AMOUNT));
-        entityData.set(TARGET, tag.getString(TAG_TARGET_UUID));
-        entityData.set(BOUNCED_ENTITIES, tag.getString(TAG_BOUNCED_ENTITIES));
-
         super.readAdditionalSaveData(tag);
+
+        setMaxBounces(tag.getInt("max_bounces"));
+        setBounces(tag.getInt("bounces"));
+        setDamage(tag.getFloat("damage"));
+        setChance(tag.getFloat("chance"));
     }
 
     @Override
@@ -206,5 +214,55 @@ public class ShadowGlaiveEntity extends ThrowableProjectile {
     @Override
     protected double getDefaultGravity() {
         return 0D;
+    }
+
+    @Override
+    public @Nullable LivingEntity getTarget() {
+        return currentTarget;
+    }
+
+    @Override
+    public void setTarget(LivingEntity target) {
+        this.currentTarget = target;
+    }
+
+    @Override
+    public Vec3 getTrailPosition(float partialTicks) {
+        return getPosition(partialTicks).add(getDeltaMovement().scale(-1));
+    }
+
+    @Override
+    public int getTrailUpdateFrequency() {
+        return 1;
+    }
+
+    @Override
+    public boolean isTrailAlive() {
+        return isAlive();
+    }
+
+    @Override
+    public boolean isTrailGrowing() {
+        return getKnownMovement().length() >= 0.1F;
+    }
+
+    @Override
+    public int getTrailMaxLength() {
+        return 5;
+    }
+
+    @Override
+    public int getTrailFadeInColor() {
+        return 0xFFFF00FF;
+    }
+
+    @Override
+    public int getTrailFadeOutColor() {
+        return 0x800000FF;
+    }
+
+    @Override
+    public double getTrailScale() {
+        return 0.15F;
     }
 }

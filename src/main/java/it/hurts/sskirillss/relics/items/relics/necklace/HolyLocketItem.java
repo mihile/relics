@@ -25,7 +25,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollectio
 import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
 import it.hurts.sskirillss.relics.items.relics.base.data.research.ResearchData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
-import it.hurts.sskirillss.relics.network.packets.sync.SyncTargetPacket;
+import it.hurts.sskirillss.relics.network.packets.sync.S2CEntityTargetPacket;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
@@ -315,7 +315,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                     level.addFreshEntity(essence);
 
                     if (!level.isClientSide())
-                        ((ServerLevel) level).getChunkSource().broadcastAndSend(player, new ClientboundCustomPayloadPacket(new SyncTargetPacket(essence.getId(), target.getId())));
+                        ((ServerLevel) level).getChunkSource().broadcastAndSend(player, new ClientboundCustomPayloadPacket(new S2CEntityTargetPacket(essence.getId(), target.getId())));
 
                     relic.spreadRelicExperience(player, stack, amount);
                     relic.addCharge(stack, 1);
@@ -345,7 +345,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                     playerSearched.level().addFreshEntity(essence);
 
                     if (!level.isClientSide())
-                        ((ServerLevel) level).getChunkSource().broadcastAndSend(playerSearched, new ClientboundCustomPayloadPacket(new SyncTargetPacket(essence.getId(), playerSearched.getId())));
+                        ((ServerLevel) level).getChunkSource().broadcastAndSend(playerSearched, new ClientboundCustomPayloadPacket(new S2CEntityTargetPacket(essence.getId(), playerSearched.getId())));
 
                     relic.spreadRelicExperience(playerSearched, stack, amount);
                     relic.addCharge(stack, 1);

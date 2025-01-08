@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.RandomSource;
@@ -65,18 +64,22 @@ public class ScreenUtils {
     public static final ResourceLocation ILLAGER_ALT_FONT = ResourceLocation.withDefaultNamespace("illageralt");
 
     public static MutableComponent illageriate(MutableComponent input, double percentage, long seed) {
-        return stylizeWidthReplacement(input, percentage, Style.EMPTY.withFont(ILLAGER_ALT_FONT), seed);
+        return stylizeWithReplacement(input, percentage, Style.EMPTY.withFont(ILLAGER_ALT_FONT), seed);
     }
 
     public static MutableComponent galactizate(MutableComponent input, double percentage, long seed) {
-        return stylizeWidthReplacement(input, percentage, Style.EMPTY.withFont(ALT_FONT), seed);
+        return stylizeWithReplacement(input, percentage, Style.EMPTY.withFont(ALT_FONT), seed);
     }
 
     public static MutableComponent obfuscate(MutableComponent input, double percentage, long seed) {
         return stylize(input, percentage, Style.EMPTY.withObfuscated(true), seed);
     }
 
-    public static MutableComponent stylizeWidthReplacement(MutableComponent input, double percentage, Style style, long seed) {
+    public static MutableComponent stylizeWithReplacement(String input, double percentage, Style style, long seed) {
+        return stylizeWithReplacement(Component.literal(input), percentage, style, seed);
+    }
+
+    public static MutableComponent stylizeWithReplacement(MutableComponent input, double percentage, Style style, long seed) {
         RandomSource random = RandomSource.create(seed);
 
         String text = input.getString();
