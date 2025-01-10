@@ -17,6 +17,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOp
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
+import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
@@ -116,6 +117,11 @@ public class SporeSackItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 20, 100))
                 .style(StyleData.builder()
+                        .tooltip(TooltipData.builder()
+                                .borderTop(0xff582f27)
+                                .borderBottom(0xff503f3a)
+                                .textured(true)
+                                .build())
                         .build())
                 .loot(LootData.builder()
                         .entry(LootEntries.WILDCARD, LootEntries.TROPIC)
