@@ -7,13 +7,13 @@ public class LootEntries {
             .dimension(".*")
             .biome(".*")
             .table("[\\w]+:chests\\/[\\w_\\/]*[\\w]+[\\w_\\/]*")
-            .chance(0.005F)
+            .chance(0.0025F)
             .build();
 
     public static final LootEntry NETHER_LIKE = LootEntry.builder()
             .dimension(".*")
             .biome(".*")
-            .table("[\\w]+:chests\\/[\\w_\\/]*(nether|inferno|hell|chasm|lava|magma|m[eo]lt|fire|flame|blaze|ember|pyre)[\\w_\\/]*",
+            .table("[\\w]+:chests\\/[\\w_\\/]*(nether|infern|hell|chasm|lava|magma|m[eo]lt|fire|flame|blaze|ember|pyre)[\\w_\\/]*",
                     "minecraft:chests/ruined_portal")
             .chance(0.025F)
             .build();
@@ -113,7 +113,7 @@ public class LootEntries {
             .dimension(".*")
             .biome("[\\w]+:.*(cave|cavern|grotto|hollow|den|chamber|crypt|subterranean)[\\w_\\/]*")
             .table("[\\w]+:chests\\/[\\w_\\/]*[\\w]+[\\w_\\/]*")
-            .chance(0.025F)
+            .chance(0.035F)
             .build();
 
     public static final LootEntry SCULK = LootEntry.builder()
@@ -121,7 +121,7 @@ public class LootEntries {
             .biome("[\\w]+:.*(sculk|warden)[\\w_\\/]*",
                     "minecraft:deep_dark")
             .table("[\\w]+:chests\\/[\\w_\\/]*[\\w]+[\\w_\\/]*")
-            .chance(0.025F)
+            .chance(0.035F)
             .build();
 
     public static final LootEntry VILLAGE = LootEntry.builder()
@@ -135,13 +135,13 @@ public class LootEntries {
             .dimension(".*")
             .biome(".*")
             .table("[\\w]+:chests\\/[\\w_\\/]*(bastion|piglin)[\\w_\\/]*")
-            .chance(0.025F)
+            .chance(0.035F)
             .build();
 
     public static final LootEntry MINESHAFT = LootEntry.builder()
             .dimension(".*")
             .biome(".*")
             .table("[\\w]+:chests\\/[\\w_\\/]*(mine)[\\w_\\/]*")
-            .chance(0.025F)
+            .chance(0.035F)
             .build();
 }

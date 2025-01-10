@@ -54,7 +54,7 @@ public class HunterBeltItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE)
+                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE, LootEntries.FOREST, LootEntries.SAVANNA)
                         .build())
                 .build();
     }
