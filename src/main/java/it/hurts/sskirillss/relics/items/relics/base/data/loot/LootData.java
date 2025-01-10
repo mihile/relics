@@ -1,31 +1,29 @@
 package it.hurts.sskirillss.relics.items.relics.base.data.loot;
 
 import it.hurts.sskirillss.relics.config.data.LootConfigData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollection;
+import it.hurts.sskirillss.relics.config.data.LootEntryConfigData;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 @Builder
 public class LootData {
     @Builder.Default
-    private LootCollection collection;
+    private List<LootEntry> entries;
 
     public LootConfigData toConfigData() {
-        return new LootConfigData(collection.getEntries());
+        return new LootConfigData(entries.stream().map(entry -> new LootEntryConfigData(entry.getDimensions(), entry.getBiomes(), entry.getTables(), entry.getChance())).toList());
     }
 
     public static class LootDataBuilder {
-        private LootCollection collection = LootCollection.builder().build();
+        private List<LootEntry> entries = new ArrayList<>();
 
-        public LootDataBuilder entry(String lootTable, float chance) {
-            this.collection.getEntries().put(lootTable, chance);
-
-            return this;
-        }
-
-        public LootDataBuilder entry(LootCollection collection) {
-            this.collection.getEntries().putAll(collection.getEntries());
+        public LootDataBuilder entry(LootEntry... entries) {
+            this.entries.addAll(Arrays.asList(entries));
 
             return this;
         }

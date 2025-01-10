@@ -14,8 +14,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.Reference;
@@ -49,7 +48,6 @@ public class DrownedBeltItem extends RelicItem implements IRenderableCurio {
                         .ability(AbilityData.builder("slots")
                                 .requiredPoints(2)
                                 .stat(StatData.builder("charm")
-                                        .icon(StatIcons.MODIFIER)
                                         .initialValue(0D, 2D)
                                         .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 0)))
@@ -57,13 +55,11 @@ public class DrownedBeltItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("anchor")
                                 .stat(StatData.builder("slowness")
-                                        .icon(StatIcons.SLOWNESS)
                                         .initialValue(0.5D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.ADD, -0.05D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 2) * 100))
                                         .build())
                                 .stat(StatData.builder("sinking")
-                                        .icon(StatIcons.SINKING)
                                         .initialValue(5D, 3D)
                                         .upgradeModifier(UpgradeOperation.ADD, -0.1D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 2) * 100))
@@ -71,7 +67,6 @@ public class DrownedBeltItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("pressure")
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(1.25D, 2D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 2) * 100))
@@ -79,7 +74,6 @@ public class DrownedBeltItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("riptide")
                                 .stat(StatData.builder("cooldown")
-                                        .icon(StatIcons.COOLDOWN)
                                         .initialValue(10D, 5D)
                                         .upgradeModifier(UpgradeOperation.ADD, -0.5D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -88,7 +82,7 @@ public class DrownedBeltItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.AQUATIC)
+                        .entry(LootEntries.WILDCARD, LootEntries.AQUATIC)
                         .build())
                 .build();
     }

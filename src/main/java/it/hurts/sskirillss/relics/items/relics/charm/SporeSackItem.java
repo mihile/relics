@@ -15,8 +15,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
@@ -48,25 +47,21 @@ public class SporeSackItem extends RelicItem {
                         .ability(AbilityData.builder("spore")
                                 .maxLevel(10)
                                 .stat(StatData.builder("size")
-                                        .icon(StatIcons.SIZE)
                                         .initialValue(0.1D, 0.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.25D, 0.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
                                 .stat(StatData.builder("cooldown")
-                                        .icon(StatIcons.COOLDOWN)
                                         .initialValue(15D, 10D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, -0.1D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("duration")
-                                        .icon(StatIcons.DURATION)
                                         .initialValue(2D, 4D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.2D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -76,13 +71,11 @@ public class SporeSackItem extends RelicItem {
                                 .requiredLevel(5)
                                 .maxLevel(10)
                                 .stat(StatData.builder("capacity")
-                                        .icon(StatIcons.CAPACITY)
                                         .initialValue(2D, 5D)
                                         .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("chance")
-                                        .icon(StatIcons.CHANCE)
                                         .initialValue(0.025D, 0.075D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1)
                                         .formatValue(value -> MathUtils.round(value * 100, 1))
@@ -92,19 +85,16 @@ public class SporeSackItem extends RelicItem {
                                 .requiredLevel(10)
                                 .maxLevel(10)
                                 .stat(StatData.builder("chance")
-                                        .icon(StatIcons.CHANCE)
                                         .initialValue(0.05D, 0.15D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.128)
                                         .formatValue(value -> (int) Math.round(MathUtils.round(value, 3) * 100))
                                         .build())
                                 .stat(StatData.builder("size")
-                                        .icon(StatIcons.SIZE)
                                         .initialValue(0.05D, 0.1D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1775)
                                         .formatValue(value -> (int) Math.round(MathUtils.round(value, 3) * 100))
                                         .build())
                                 .stat(StatData.builder("amount")
-                                        .icon(StatIcons.COUNT)
                                         .initialValue(0.05D, 0.15D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.4)
                                         .formatValue(value -> MathUtils.round(value, 2))
@@ -118,7 +108,6 @@ public class SporeSackItem extends RelicItem {
                                         .predicate("spore", PredicateType.CAST, (player, stack) -> stack.getOrDefault(CHARGE, 0) > 0)
                                         .build())
                                 .stat(StatData.builder("size")
-                                        .icon(StatIcons.SIZE)
                                         .initialValue(0.05D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> MathUtils.round(value, 2))
@@ -129,7 +118,7 @@ public class SporeSackItem extends RelicItem {
                 .style(StyleData.builder()
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootCollections.JUNGLE)
+                        .entry(LootEntries.WILDCARD, LootEntries.TROPIC)
                         .build())
                 .build();
     }

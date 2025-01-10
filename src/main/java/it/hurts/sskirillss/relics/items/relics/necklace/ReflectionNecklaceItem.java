@@ -16,8 +16,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
@@ -60,19 +59,16 @@ public class ReflectionNecklaceItem extends RelicItem implements IRenderableCuri
                 .abilities(AbilitiesData.builder()
                         .ability(AbilityData.builder("explode")
                                 .stat(StatData.builder("capacity")
-                                        .icon(StatIcons.CAPACITY)
                                         .initialValue(20D, 60D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.35D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.25D, 0.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.5D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
                                 .stat(StatData.builder("stun")
-                                        .icon(StatIcons.STUN)
                                         .initialValue(0.05D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25D)
                                         .formatValue(value -> MathUtils.round(value, 2))
@@ -88,7 +84,7 @@ public class ReflectionNecklaceItem extends RelicItem implements IRenderableCuri
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootCollections.NETHER)
+                        .entry(LootEntries.WILDCARD, LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
                         .build())
                 .build();
     }

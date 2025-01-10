@@ -15,8 +15,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
@@ -62,13 +61,11 @@ public class MidnightRobeItem extends RelicItem implements IRenderableCurio {
                                         .type(CastType.TOGGLEABLE)
                                         .build())
                                 .stat(StatData.builder("light")
-                                        .icon(StatIcons.LIGHTING)
                                         .initialValue(1D, 2D)
                                         .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("speed")
-                                        .icon(StatIcons.SPEED)
                                         .initialValue(0.1D, 0.35D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.35D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 3) * 100))
@@ -76,13 +73,11 @@ public class MidnightRobeItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("backstab")
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(1.25D, 1.75D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> (int) (100 * MathUtils.round(value - 1, 1)))
                                         .build())
                                 .stat(StatData.builder("distance")
-                                        .icon(StatIcons.DISTANCE)
                                         .initialValue(20D, 15D)
                                         .upgradeModifier(UpgradeOperation.ADD, -0.5D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -91,7 +86,7 @@ public class MidnightRobeItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.ANTHROPOGENIC)
+                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }
