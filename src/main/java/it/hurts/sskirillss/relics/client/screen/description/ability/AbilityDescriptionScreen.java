@@ -280,8 +280,6 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
             int color = DescriptionUtils.TEXT_COLOR;
 
             for (var stat : relic.getAbilityData(ability).getStats().values()) {
-                var component = Component.literal(String.valueOf(stat.getFormatValue().apply(relic.getStatValue(stack, ability, stat.getId(), wantsUpgrade ? level + 1 : wantsReset ? 0 : level)))).withStyle(ChatFormatting.BOLD);
-
                 if (wantsUpgrade)
                     color = 0x228B22;
 
@@ -300,6 +298,9 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
 
                     color = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
                 }
+
+                var value = String.valueOf(stat.getFormatValue().apply(relic.getStatValue(stack, ability, stat.getId(), wantsUpgrade ? level + 1 : wantsReset ? 0 : level)));
+                var component = Component.literal(value.endsWith(".0") ? value.replace(".0", "") : value).withStyle(ChatFormatting.BOLD);
 
                 components.add(component.withColor(color));
             }
