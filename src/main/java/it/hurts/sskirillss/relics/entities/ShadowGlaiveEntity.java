@@ -108,7 +108,7 @@ public class ShadowGlaiveEntity extends ThrowableProjectile implements ITargetab
 
         var currentTarget = getTarget();
 
-        if (currentTarget != null && this.position().distanceTo(currentTarget.position()) >= 16F)
+        if (currentTarget != null && (this.position().distanceTo(currentTarget.position()) >= 16F || currentTarget.isDeadOrDying()))
             currentTarget = null;
 
         if (!level.isClientSide()) {
