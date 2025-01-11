@@ -38,8 +38,9 @@ public class GuiGraphicsMixin {
         if (player == null || !(stack.getItem() instanceof IRelicItem relic) || !relic.isRelicFlawless(stack))
             return;
 
-        var guiGraphics = (GuiGraphics) (Object) this;
+        var data = relic.getStyleData().getBeams().apply(player, stack);
 
+        var guiGraphics = (GuiGraphics) (Object) this;
         var poseStack = guiGraphics.pose();
 
         var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
@@ -58,7 +59,7 @@ public class GuiGraphicsMixin {
 
             var length = 0.85F + ((i % 2 == 0 ? Math.sin(time * 0.25F) : Math.cos(time * 0.25F)) * 0.1F);
 
-            RenderUtils.renderFlatBeam(guiGraphics, partialTicks, (float) length, 0.45F, 0xFFFFFF00, 0x00FF0000);
+            RenderUtils.renderFlatBeam(guiGraphics, partialTicks, (float) length, 0.45F, data.getStartColor(), data.getEndColor());
 
             poseStack.popPose();
         }

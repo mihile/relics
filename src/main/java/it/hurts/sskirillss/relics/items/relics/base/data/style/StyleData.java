@@ -13,17 +13,29 @@ public class StyleData {
     @Builder.Default
     private BiFunction<Player, ItemStack, TooltipData> tooltip;
 
+    @Builder.Default
+    private BiFunction<Player, ItemStack, BeamsData> beams;
+
     public static class StyleDataBuilder {
         private BiFunction<Player, ItemStack, TooltipData> tooltip = (player, stack) -> TooltipData.builder().build();
+        private BiFunction<Player, ItemStack, BeamsData> beams = (player, stack) -> BeamsData.builder().build();
 
         public StyleDataBuilder tooltip(TooltipData tooltip) {
-            this.tooltip = (player, stack) -> tooltip;
-
-            return this;
+            return tooltip((player, stack) -> tooltip);
         }
 
         public StyleDataBuilder tooltip(BiFunction<Player, ItemStack, TooltipData> tooltip) {
             this.tooltip = tooltip;
+
+            return this;
+        }
+
+        public StyleDataBuilder beams(BeamsData beams) {
+            return beams((player, stack) -> beams);
+        }
+
+        public StyleDataBuilder beams(BiFunction<Player, ItemStack, BeamsData> beams) {
+            this.beams = beams;
 
             return this;
         }
