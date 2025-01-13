@@ -16,8 +16,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import net.minecraft.client.model.EntityModel;
@@ -57,7 +56,6 @@ public class JellyfishNecklaceItem extends RelicItem implements IRenderableCurio
                                         .type(CastType.TOGGLEABLE)
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.5D, 2.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -66,7 +64,6 @@ public class JellyfishNecklaceItem extends RelicItem implements IRenderableCurio
                         .ability(AbilityData.builder("paralysis")
                                 .requiredLevel(5)
                                 .stat(StatData.builder("duration")
-                                        .icon(StatIcons.DURATION)
                                         .initialValue(0.5D, 1.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -75,7 +72,7 @@ public class JellyfishNecklaceItem extends RelicItem implements IRenderableCurio
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootCollections.AQUATIC)
+                        .entry(LootEntries.WILDCARD, LootEntries.AQUATIC)
                         .build())
                 .build();
     }

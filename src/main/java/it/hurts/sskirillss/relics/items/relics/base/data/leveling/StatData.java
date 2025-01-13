@@ -2,8 +2,6 @@ package it.hurts.sskirillss.relics.items.relics.base.data.leveling;
 
 import it.hurts.sskirillss.relics.config.data.StatConfigData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcon;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,10 +30,6 @@ public class StatData {
 
     @Builder.Default
     private Function<Double, ? extends Number> formatValue = Double::doubleValue;
-
-    @Builder.Default
-    @Deprecated(forRemoval = true)
-    private StatIcon icon = StatIcons.UNKNOWN;
 
     public StatConfigData toConfigData() {
         return new StatConfigData(initialValue.getKey(), initialValue.getValue(), thresholdValue.getKey(), thresholdValue.getValue(), upgradeModifier.getKey(), upgradeModifier.getValue());

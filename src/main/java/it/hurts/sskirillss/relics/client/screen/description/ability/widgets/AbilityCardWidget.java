@@ -452,7 +452,7 @@ public class AbilityCardWidget extends AbstractDescriptionWidget implements IHov
         poseStack.scale(0.5F, 0.5F, 0.5F);
 
         if (!relic.isAbilityUnlocked(stack, ability)) {
-            title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
+            title = ScreenUtils.stylizeWithReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
 
             var random = minecraft.player.getRandom();
 

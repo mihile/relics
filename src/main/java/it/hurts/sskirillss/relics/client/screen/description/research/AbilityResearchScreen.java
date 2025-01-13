@@ -409,7 +409,7 @@ public class AbilityResearchScreen extends Screen implements IAutoScaledScreen, 
             var title = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability, ability);
 
             if (!relic.isAbilityUnlocked(stack, ability)) {
-                title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
+                title = ScreenUtils.stylizeWithReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
 
                 var random = player.getRandom();
 
@@ -467,7 +467,7 @@ public class AbilityResearchScreen extends Screen implements IAutoScaledScreen, 
             if (researchProgress < maxResearchProgress)
                 component.withColor(color);
 
-            component = ScreenUtils.stylizeWidthReplacement(component, 1F - progress, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), ability.length());
+            component = ScreenUtils.stylizeWithReplacement(component, 1F - progress, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), ability.length());
 
             for (FormattedCharSequence line : minecraft.font.split(component, 180)) {
                 guiGraphics.drawString(minecraft.font, line, -(minecraft.font.width(line) / 2F), yOff, DescriptionUtils.TEXT_COLOR, false);

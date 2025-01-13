@@ -3,26 +3,24 @@ package it.hurts.sskirillss.relics.config.data;
 import it.hurts.octostudios.octolib.modules.config.annotations.Prop;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollection;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootEntry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LootConfigData {
-    @Prop(comment = "List of key-value pairs where the key is a textual identifier for the loot table (supporting regular expressions) and the value represents the probability of generating the relic within the specified bounds")
-    private Map<String, Float> entries;
+    @Prop(comment = "List of conditions for obtaining the relic. Supports both direct ID specification and regular expressions.")
+    private List<LootEntryConfigData> entries;
 
     public LootData toData(IRelicItem relic) {
         LootData data = relic.getLootData();
 
-        data.setCollection(LootCollection.builder()
-                .entries(entries)
-                .build());
+        data.setEntries(entries.stream().map(entry -> new LootEntry(entry.getDimensions(), entry.getBiomes(), entry.getTables(), entry.getChance())).toList());
 
         return data;
     }

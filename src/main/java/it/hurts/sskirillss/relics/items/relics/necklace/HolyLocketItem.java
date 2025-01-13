@@ -21,11 +21,10 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.items.relics.base.data.research.ResearchData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
-import it.hurts.sskirillss.relics.network.packets.sync.SyncTargetPacket;
+import it.hurts.sskirillss.relics.network.packets.sync.S2CEntityTargetPacket;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
@@ -75,25 +74,21 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                                         .build())
                                 .icon((player, stack, ability) -> ability + (stack.getOrDefault(TOGGLED, true) ? "_holy" : "_wicked"))
                                 .stat(StatData.builder("radius")
-                                        .icon(StatIcons.DISTANCE)
                                         .initialValue(3D, 6D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("amount")
-                                        .icon(StatIcons.MULTIPLIER)
                                         .initialValue(0.1D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 3) * 100))
                                         .build())
                                 .stat(StatData.builder("count")
-                                        .icon(StatIcons.COUNT)
                                         .initialValue(1D, 3D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("capacity")
-                                        .icon(StatIcons.CAPACITY)
                                         .initialValue(8D, 12D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
@@ -102,13 +97,11 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                         .ability(AbilityData.builder("repentance")
                                 .requiredLevel(5)
                                 .stat(StatData.builder("radius")
-                                        .icon(StatIcons.DISTANCE)
                                         .initialValue(2D, 6D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.1D, 0.2D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 2))
@@ -123,7 +116,6 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                                         .predicate("blessing", PredicateType.CAST, (player, stack) -> getCharges(stack) > 0)
                                         .build())
                                 .stat(StatData.builder("consumption")
-                                        .icon(StatIcons.CAPACITY)
                                         .initialValue(8D, 6D)
                                         .upgradeModifier(UpgradeOperation.ADD, -1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
@@ -140,7 +132,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                 .style(StyleData.builder()
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootCollections.DESERT)
+                        .entry(LootEntries.WILDCARD, LootEntries.DESERT)
                         .build())
                 .build();
     }
@@ -315,7 +307,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                     level.addFreshEntity(essence);
 
                     if (!level.isClientSide())
-                        ((ServerLevel) level).getChunkSource().broadcastAndSend(player, new ClientboundCustomPayloadPacket(new SyncTargetPacket(essence.getId(), target.getId())));
+                        ((ServerLevel) level).getChunkSource().broadcastAndSend(player, new ClientboundCustomPayloadPacket(new S2CEntityTargetPacket(essence.getId(), target.getId())));
 
                     relic.spreadRelicExperience(player, stack, amount);
                     relic.addCharge(stack, 1);
@@ -345,7 +337,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                     playerSearched.level().addFreshEntity(essence);
 
                     if (!level.isClientSide())
-                        ((ServerLevel) level).getChunkSource().broadcastAndSend(playerSearched, new ClientboundCustomPayloadPacket(new SyncTargetPacket(essence.getId(), playerSearched.getId())));
+                        ((ServerLevel) level).getChunkSource().broadcastAndSend(playerSearched, new ClientboundCustomPayloadPacket(new S2CEntityTargetPacket(essence.getId(), playerSearched.getId())));
 
                     relic.spreadRelicExperience(playerSearched, stack, amount);
                     relic.addCharge(stack, 1);

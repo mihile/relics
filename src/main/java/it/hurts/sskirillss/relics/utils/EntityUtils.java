@@ -126,7 +126,7 @@ public class EntityUtils {
     }
 
     private static ResourceLocation getAttributeId(ItemStack stack, Attribute attribute) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MODID,BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_" + BuiltInRegistries.ATTRIBUTE.getKey(attribute).getPath());
+        return ResourceLocation.fromNamespaceAndPath(Reference.MODID, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + "_" + BuiltInRegistries.ATTRIBUTE.getKey(attribute).getPath());
     }
 
     public static void applyAttribute(LivingEntity entity, ItemStack stack, Holder<Attribute> attributeHolder, float value, AttributeModifier.Operation operation) {
@@ -200,7 +200,8 @@ public class EntityUtils {
 
     public static boolean isAlliedTo(@Nullable Entity source, @Nullable Entity target) {
         return (source == null || target == null) || (source.isAlliedTo(target) || target.isAlliedTo(source)) || (target.getUUID().equals(source.getUUID()))
-                || (target instanceof OwnableEntity ownable && ownable.getOwnerUUID() != null && ownable.getOwnerUUID().equals(source.getUUID()));
+                || ((target instanceof OwnableEntity ownableTarget && ownableTarget.getOwnerUUID() != null && ownableTarget.getOwnerUUID().equals(source.getUUID()))
+                || (source instanceof OwnableEntity ownableSource && ownableSource.getOwnerUUID() != null && ownableSource.getOwnerUUID().equals(target.getUUID())));
     }
 
     public static boolean hurt(LivingEntity entity, DamageSource source, float amount) {

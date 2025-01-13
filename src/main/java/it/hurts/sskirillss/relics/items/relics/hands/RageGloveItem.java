@@ -22,8 +22,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.network.NetworkHandler;
 import it.hurts.sskirillss.relics.network.packets.PacketPlayerMotion;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
@@ -81,19 +80,16 @@ public class RageGloveItem extends RelicItem implements IRenderableCurio {
                         .ability(AbilityData.builder("rage")
                                 .maxLevel(10)
                                 .stat(StatData.builder("incoming_damage")
-                                        .icon(StatIcons.RECEIVED_DAMAGE)
                                         .initialValue(0.05D, 0.025D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.05D)
                                         .formatValue(value -> MathUtils.round(MathUtils.round(value, 3) * 100, 3))
                                         .build())
                                 .stat(StatData.builder("dealt_damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.025D, 0.075D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(MathUtils.round(value, 3) * 100, 3))
                                         .build())
                                 .stat(StatData.builder("duration")
-                                        .icon(StatIcons.DURATION)
                                         .initialValue(2D, 4D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -103,19 +99,16 @@ public class RageGloveItem extends RelicItem implements IRenderableCurio {
                                 .requiredLevel(5)
                                 .maxLevel(10)
                                 .stat(StatData.builder("heal")
-                                        .icon(StatIcons.REGENERATION)
                                         .initialValue(0.0001D, 0.00025D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(MathUtils.round(value, 5) * 20, 5))
                                         .build())
                                 .stat(StatData.builder("movement_speed")
-                                        .icon(StatIcons.SPEED)
                                         .initialValue(0.01D, 0.025D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(MathUtils.round(value, 3) * 100, 3))
                                         .build())
                                 .stat(StatData.builder("attack_speed")
-                                        .icon(StatIcons.ATTACK_SPEED)
                                         .initialValue(0.005D, 0.01D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.05D)
                                         .formatValue(value -> MathUtils.round(MathUtils.round(value, 3) * 100, 3))
@@ -126,22 +119,18 @@ public class RageGloveItem extends RelicItem implements IRenderableCurio {
                                 .maxLevel(10)
                                 .active(CastData.builder()
                                         .type(CastType.INSTANTANEOUS)
-                                        //.container(RelicContainerRegistry.CURIOS.get())
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
                                         .initialValue(0.1D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value, 2))
                                         .build())
                                 .stat(StatData.builder("distance")
-                                        .icon(StatIcons.DISTANCE)
                                         .initialValue(3D, 8D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.3D)
                                         .formatValue(value -> MathUtils.round(value, 1))
                                         .build())
                                 .stat(StatData.builder("cooldown")
-                                        .icon(StatIcons.COOLDOWN)
                                         .initialValue(20, 15)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, -0.075)
                                         .formatValue(value -> MathUtils.round(value, 1))
@@ -150,7 +139,7 @@ public class RageGloveItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 20, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.NETHER)
+                        .entry(LootEntries.WILDCARD, LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
                         .build())
                 .build();
     }

@@ -16,24 +16,24 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 @Data
 @AllArgsConstructor
-public class SyncTargetPacket implements CustomPacketPayload {
-    private final int targeterId;
+public class S2CEntityTargetPacket implements CustomPacketPayload {
+    private final int sourceId;
     private final int targetId;
 
-    public static final CustomPacketPayload.Type<SyncTargetPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "target_path"));
+    public static final CustomPacketPayload.Type<S2CEntityTargetPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Reference.MODID, "entity_target"));
 
-    public static final StreamCodec<ByteBuf, SyncTargetPacket> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, SyncTargetPacket::getTargetId,
-            ByteBufCodecs.INT, SyncTargetPacket::getTargeterId,
-            SyncTargetPacket::new
+    public static final StreamCodec<ByteBuf, S2CEntityTargetPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, S2CEntityTargetPacket::getTargetId,
+            ByteBufCodecs.INT, S2CEntityTargetPacket::getSourceId,
+            S2CEntityTargetPacket::new
     );
 
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            Level level = Minecraft.getInstance().player.level();
-            if (level.getEntity(targetId) instanceof ITargetableEntity targeter && level.getEntity(targeterId) instanceof LivingEntity target) {
-                targeter.setTarget(target);
-            }
+            var level = ctx.player().getCommandSenderWorld();
+
+            if (level.getEntity(sourceId) instanceof ITargetableEntity source && level.getEntity(targetId) instanceof LivingEntity target)
+                source.setTarget(target);
         });
     }
 

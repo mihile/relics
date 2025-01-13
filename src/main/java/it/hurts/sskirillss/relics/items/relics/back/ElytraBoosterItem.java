@@ -18,8 +18,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.Reference;
 import net.minecraft.client.model.EntityModel;
@@ -69,13 +68,11 @@ public class ElytraBoosterItem extends RelicItem implements IRenderableCurio {
                                         .predicate("elytra", PredicateType.CAST, (player, stack) -> player.isFallFlying())
                                         .build())
                                 .stat(StatData.builder("capacity")
-                                        .icon(StatIcons.CAPACITY)
                                         .initialValue(50, 100)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("speed")
-                                        .icon(StatIcons.SPEED)
                                         .initialValue(1.1D, 1.5D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
                                         .formatValue(value -> MathUtils.round(value * 16, 1))
@@ -84,7 +81,7 @@ public class ElytraBoosterItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.END)
+                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }
