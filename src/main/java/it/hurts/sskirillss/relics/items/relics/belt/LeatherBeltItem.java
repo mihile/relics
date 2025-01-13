@@ -14,8 +14,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import net.minecraft.client.model.HumanoidModel;
@@ -39,7 +38,6 @@ public class LeatherBeltItem extends RelicItem implements IRenderableCurio {
                         .ability(AbilityData.builder("slots")
                                 .requiredPoints(2)
                                 .stat(StatData.builder("charm")
-                                        .icon(StatIcons.MODIFIER)
                                         .initialValue(1D, 3D)
                                         .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) (MathUtils.round(value, 1)))
@@ -48,7 +46,7 @@ public class LeatherBeltItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.VILLAGE)
+                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE)
                         .build())
                 .build();
     }

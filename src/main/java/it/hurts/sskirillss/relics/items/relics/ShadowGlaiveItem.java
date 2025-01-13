@@ -1,212 +1,135 @@
 package it.hurts.sskirillss.relics.items.relics;
 
 import it.hurts.sskirillss.relics.entities.ShadowGlaiveEntity;
-import it.hurts.sskirillss.relics.entities.ShadowSawEntity;
-import it.hurts.sskirillss.relics.init.CreativeTabRegistry;
-import it.hurts.sskirillss.relics.init.SoundRegistry;
-import it.hurts.sskirillss.relics.items.misc.CreativeContentConstructor;
+import it.hurts.sskirillss.relics.init.EntityRegistry;
+import it.hurts.sskirillss.relics.init.ItemRegistry;
+import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.RelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.data.RelicData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.AbilitiesData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.AbilityData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.*;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemColor;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemShape;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
+import it.hurts.sskirillss.relics.items.relics.base.data.research.ResearchData;
+import it.hurts.sskirillss.relics.items.relics.base.data.style.BeamsData;
+import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
+import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import top.theillusivec4.curios.api.SlotContext;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
-
-import static it.hurts.sskirillss.relics.init.DataComponentRegistry.*;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 public class ShadowGlaiveItem extends RelicItem {
     @Override
     public RelicData constructDefaultRelicData() {
         return RelicData.builder()
                 .abilities(AbilitiesData.builder()
-                        .ability(AbilityData.builder("glaive")
-                                .stat(StatData.builder("recharge")
-                                        .icon(StatIcons.DURATION)
-                                        .initialValue(30D, 10D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, -0.09D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
+                        .ability(AbilityData.builder("mayhem")
+                                .stat(StatData.builder("chance")
+                                        .initialValue(0.05D, 0.15D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.065D)
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
                                 .stat(StatData.builder("bounces")
-                                        .icon(StatIcons.REFLECT)
-                                        .initialValue(3D, 5D)
-                                        .upgradeModifier(UpgradeOperation.ADD, 1D)
+                                        .initialValue(2D, 4D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
                                 .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
-                                        .initialValue(2D, 5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
+                                        .initialValue(0.1D, 0.2D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
-                                .stat(StatData.builder("radius")
-                                        .icon(StatIcons.DISTANCE)
-                                        .initialValue(2.5D, 5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
+                                .research(ResearchData.builder()
+                                        .star(0, 11, 2).star(1, 3, 19).star(2, 11, 19)
+                                        .star(3, 19, 19).star(4, 11, 29)
+                                        .link(0, 2).link(2, 1).link(2, 3).link(2, 4)
                                         .build())
                                 .build())
-                        .ability(AbilityData.builder("saw")
+                        .ability(AbilityData.builder("cloning")
                                 .requiredLevel(5)
-                                .stat(StatData.builder("speed")
-                                        .icon(StatIcons.SPEED)
-                                        .initialValue(20D, 15D)
-                                        .upgradeModifier(UpgradeOperation.ADD, -1D)
-                                        .formatValue(value -> MathUtils.round(value / 20, 2))
+                                .stat(StatData.builder("chance")
+                                        .initialValue(0.05D, 0.1D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
-                                .stat(StatData.builder("damage")
-                                        .icon(StatIcons.DEALT_DAMAGE)
-                                        .initialValue(0.75D, 1.5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
+                                .research(ResearchData.builder()
+                                        .star(0, 12, 2).star(1, 7, 7).star(2, 17, 14)
+                                        .star(3, 6, 22).star(4, 11, 29)
+                                        .link(0, 1).link(1, 2).link(2, 3).link(3, 4)
                                         .build())
                                 .build())
                         .build())
-                .leveling(new LevelingData(100, 10, 100))
+                .style(StyleData.builder()
+                        .tooltip(TooltipData.builder()
+                                .borderTop(0xff2c2430)
+                                .borderBottom(0xff471e65)
+                                .textured(true)
+                                .build())
+                        .beams(BeamsData.builder()
+                                .startColor(0xFFFF00FF)
+                                .endColor(0x000000FF)
+                                .build())
+                        .build())
+                .leveling(LevelingData.builder()
+                        .initialCost(100)
+                        .maxLevel(15)
+                        .step(100)
+                        .sources(LevelingSourcesData.builder()
+                                .source(LevelingSourceData.abilityBuilder("mayhem")
+                                        .initialValue(1)
+                                        .gem(GemShape.SQUARE, GemColor.PURPLE)
+                                        .build())
+                                .build())
+                        .build())
                 .loot(LootData.builder()
-                        .entry(LootCollections.END)
-                        .entry(LootCollections.SCULK)
+                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }
 
-    @Override
-    public void gatherCreativeTabContent(CreativeContentConstructor constructor) {
-        ItemStack stack = this.getDefaultInstance();
+    @EventBusSubscriber
+    public static class ShadowGlaiveEvents {
+        @SubscribeEvent
+        public static void onLivingHurt(LivingDamageEvent.Post event) {
+            var damage = event.getOriginalDamage();
 
-        stack.set(CHARGE, 8);
+            if (damage < 1F)
+                return;
 
-        constructor.entry(CreativeTabRegistry.RELICS_TAB.get(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, stack);
-    }
+            var source = event.getSource().getDirectEntity();
+            var target = event.getEntity();
 
-    @Override
-    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        if (worldIn.isClientSide())
-            return;
+            if (!(source instanceof Player player) || EntityUtils.isAlliedTo(source, target))
+                return;
 
-        int charges = stack.getOrDefault(CHARGE, 0);
+            var stack = EntityUtils.findEquippedCurio(source, ItemRegistry.SHADOW_GLAIVE.get());
 
-        if (entityIn.tickCount % 20 != 0 || charges >= 8)
-            return;
+            if (!(stack.getItem() instanceof IRelicItem relic) || source.getRandom().nextDouble() > relic.getStatValue(stack, "mayhem", "chance"))
+                return;
 
-        int time = stack.getOrDefault(TIME, 0);
+            var level = target.getCommandSenderWorld();
 
-        if (getSaw(stack, worldIn) != null)
-            return;
+            var entity = new ShadowGlaiveEntity(EntityRegistry.SHADOW_GLAIVE.get(), level);
 
-        if (time >= getStatValue(stack, "glaive", "recharge")) {
-            stack.set(CHARGE, charges + 1);
-            stack.set(TIME, 0);
-        } else
-            stack.set(TIME, ++time);
-    }
+            entity.setDamage((float) (damage * relic.getStatValue(stack, "mayhem", "damage")));
+            entity.setMaxBounces((int) relic.getStatValue(stack, "mayhem", "bounces"));
+            entity.getBouncedTargets().add(target.getStringUUID());
+            entity.setPos(target.getEyePosition());
+            entity.setOwner(source);
 
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        ItemStack stack = playerIn.getItemInHand(handIn);
-        int charges = stack.getOrDefault(CHARGE, 0);
-        RandomSource random = playerIn.getRandom();
+            if (relic.canPlayerUseAbility(player, stack, "cloning"))
+                entity.setChance((float) relic.getStatValue(stack, "cloning", "chance"));
 
-        if (playerIn.getCooldowns().isOnCooldown(stack.getItem()))
-            return InteractionResultHolder.fail(stack);
+            if (entity.locateNearestTargets().size() > 1) {
+                level.addFreshEntity(entity);
 
-        ShadowSawEntity entity = getSaw(stack, worldIn);
-
-        if (entity != null) {
-            if (!entity.isReturning)
-                entity.isReturning = true;
-        } else {
-            if (playerIn.isShiftKeyDown() && isAbilityUnlocked(stack, "saw")) {
-                if (charges == 8 && getSaw(stack, worldIn) == null) {
-                    ShadowSawEntity saw = new ShadowSawEntity(stack, playerIn);
-
-                    saw.setStack(stack);
-                    saw.setOwner(playerIn);
-                    saw.teleportTo(playerIn.getX(), playerIn.getY() + playerIn.getBbHeight() * 0.5F, playerIn.getZ());
-                    saw.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.75F, 1, 0.0F);
-
-                    worldIn.addFreshEntity(saw);
-
-                    worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundRegistry.THROW.get(),
-                            SoundSource.MASTER, 0.5F, 0.35F + (random.nextFloat() * 0.25F));
-
-                    stack.set(CHARGE, 0);
-                    stack.set(SAW, saw.getStringUUID());
-                }
-            } else {
-                if (charges > 0) {
-                    ShadowGlaiveEntity glaive = new ShadowGlaiveEntity(worldIn, playerIn);
-
-                    glaive.setStack(stack);
-                    glaive.setOwner(playerIn);
-                    glaive.teleportTo(playerIn.getX(), playerIn.getY() + playerIn.getBbHeight() * 0.5F, playerIn.getZ());
-                    glaive.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.75F, 1, 0.0F);
-
-                    worldIn.addFreshEntity(glaive);
-
-                    EntityHitResult result = EntityUtils.rayTraceEntity(playerIn, entry -> !EntityUtils.isAlliedTo(playerIn, entry), 32);
-
-                    if (result != null) {
-                        if (result.getEntity() instanceof LivingEntity target)
-                            glaive.setTarget(target);
-                    }
-
-                    worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundRegistry.THROW.get(),
-                            SoundSource.MASTER, 0.5F, 0.75F + (random.nextFloat() * 0.5F));
-
-                    stack.set(CHARGE, charges - 1);
-                }
+                relic.spreadRelicExperience(player, stack, 1);
             }
         }
-
-        return InteractionResultHolder.pass(stack);
-    }
-
-    @Nullable
-    public ShadowSawEntity getSaw(ItemStack stack, Level level) {
-        try {
-            UUID uuid = UUID.fromString(stack.getOrDefault(SAW, ""));
-
-            if (level.isClientSide())
-                return null;
-
-            ServerLevel serverLevel = (ServerLevel) level;
-            Entity entity = serverLevel.getEntity(uuid);
-
-            if (entity instanceof ShadowSawEntity saw)
-                return saw;
-
-            stack.set(SAW, "");
-
-            return null;
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return false;
     }
 }

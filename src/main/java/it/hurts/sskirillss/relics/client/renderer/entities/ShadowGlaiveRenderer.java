@@ -12,36 +12,35 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ShadowGlaiveRenderer extends EntityRenderer<ShadowGlaiveEntity> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/entities/shadow_glaive.png");
+
     public ShadowGlaiveRenderer(Context renderManager) {
         super(renderManager);
     }
 
     @Override
-    public void render(ShadowGlaiveEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        float time = entityIn.tickCount + (Minecraft.getInstance().isPaused() ? 0 : partialTicks);
+    public void render(ShadowGlaiveEntity entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+        float time = entity.tickCount + (Minecraft.getInstance().isPaused() ? 0 : partialTicks);
 
         matrixStackIn.pushPose();
 
-        matrixStackIn.translate(0, -0.2F, 0);
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.getYRot(), entityIn.getYRot()) - 90.0F));
-        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.getXRot(), entityIn.getXRot())));
-        matrixStackIn.mulPose(Axis.YP.rotationDegrees(time * 40F));
-        matrixStackIn.scale(0.35F, 0.35F, 0.35F);
+        matrixStackIn.scale(1.35F, 1.35F, 1.35F);
+        matrixStackIn.mulPose(Axis.XP.rotationDegrees(90F));
+        matrixStackIn.mulPose(Axis.ZP.rotationDegrees(time * 40F));
+        matrixStackIn.translate(0F, -1F, -0.075F);
 
-        new ShadowGlaiveModel<>().renderToBuffer(matrixStackIn, bufferIn.getBuffer(RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(Reference.MODID,
-                "textures/entities/shadow_glaive.png"))), packedLightIn, OverlayTexture.NO_OVERLAY);
+        new ShadowGlaiveModel<>().renderToBuffer(matrixStackIn, bufferIn.getBuffer(RenderType.entityCutout(getTextureLocation(entity))), packedLightIn, OverlayTexture.NO_OVERLAY);
 
         matrixStackIn.popPose();
     }
 
     @Override
     public ResourceLocation getTextureLocation(ShadowGlaiveEntity entity) {
-        return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "textures/entities/shadow_glaive.png");
+        return TEXTURE;
     }
 }

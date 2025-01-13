@@ -32,14 +32,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -234,7 +232,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
         var title = Component.translatableWithFallback(sourceData.getTranslationPath().apply(stack) + ".title", source);
 
         if (!relic.isLevelingSourceUnlocked(stack, source)) {
-            title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), source.length());
+            title = ScreenUtils.stylizeWithReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), source.length());
 
             var random = player.getRandom();
 
@@ -346,7 +344,7 @@ public class ExperienceDescriptionScreen extends Screen implements IAutoScaledSc
                     title
             );
 
-            var component = ScreenUtils.stylizeWidthReplacement(Component.translatable(sourceData.getTranslationPath().apply(stack) + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), source.length());
+            var component = ScreenUtils.stylizeWithReplacement(Component.translatable(sourceData.getTranslationPath().apply(stack) + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), source.length());
 
             for (FormattedCharSequence line : font.split(component, 340)) {
                 guiGraphics.drawString(font, line, (x + 112) * 2, (y + 74) * 2 + yOff, 0x662f13, false);

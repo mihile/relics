@@ -17,7 +17,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemColor;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemShape;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.items.relics.base.data.research.ResearchData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
@@ -87,7 +87,7 @@ public class PhantomBootItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootCollections.END)
+                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }

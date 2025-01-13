@@ -148,9 +148,9 @@ public class RenderUtils {
         BufferUploader.drawWithShader(builder.buildOrThrow());
     }
 
-    public static void renderFlatBeam(PoseStack matrixStack, MultiBufferSource bufferIn, float partialTicks, float length, float width, int startColor, int endColor) {
-        var builder = bufferIn.getBuffer(RenderType.dragonRays());
-        var matrix4f = matrixStack.last().pose();
+    public static void renderFlatBeam(GuiGraphics guiGraphics, float partialTicks, float length, float width, int startColor, int endColor) {
+        var builder = guiGraphics.bufferSource().getBuffer(RenderType.dragonRays());
+        var matrix4f = guiGraphics.pose().last().pose();
 
         int startRed = (startColor >> 16) & 0xFF;
         int startGreen = (startColor >> 8) & 0xFF;

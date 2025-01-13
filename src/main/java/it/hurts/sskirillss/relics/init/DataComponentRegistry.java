@@ -93,12 +93,6 @@ public class DataComponentRegistry {
                     .build()
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> SAW = DATA_COMPONENTS.register("saw",
-            () -> DataComponentType.<String>builder()
-                    .persistent(Codec.STRING)
-                    .build()
-    );
-
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> PORTAL = DATA_COMPONENTS.register("portal",
             () -> DataComponentType.<String>builder()
                     .persistent(Codec.STRING)

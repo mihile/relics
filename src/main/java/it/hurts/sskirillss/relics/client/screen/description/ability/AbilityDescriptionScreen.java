@@ -249,7 +249,7 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
         var title = Component.translatableWithFallback("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability, ability);
 
         if (!relic.isAbilityUnlocked(stack, ability)) {
-            title = ScreenUtils.stylizeWidthReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
+            title = ScreenUtils.stylizeWithReplacement(title, 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT).withColor(0x9E00B0), ability.length());
 
             var random = player.getRandom();
 
@@ -280,8 +280,6 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
             int color = DescriptionUtils.TEXT_COLOR;
 
             for (var stat : relic.getAbilityData(ability).getStats().values()) {
-                var component = Component.literal(String.valueOf(stat.getFormatValue().apply(relic.getStatValue(stack, ability, stat.getId(), wantsUpgrade ? level + 1 : wantsReset ? 0 : level)))).withStyle(ChatFormatting.BOLD);
-
                 if (wantsUpgrade)
                     color = 0x228B22;
 
@@ -300,6 +298,9 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
 
                     color = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
                 }
+
+                var value = String.valueOf(stat.getFormatValue().apply(relic.getStatValue(stack, ability, stat.getId(), wantsUpgrade ? level + 1 : wantsReset ? 0 : level)));
+                var component = Component.literal(value.endsWith(".0") ? value.replace(".0", "") : value).withStyle(ChatFormatting.BOLD);
 
                 components.add(component.withColor(color));
             }
@@ -369,7 +370,7 @@ public class AbilityDescriptionScreen extends Screen implements IAutoScaledScree
             for (var stat : relic.getAbilityData(ability).getStats().values())
                 placeholders.add(stat.getFormatValue().apply(relic.getStatValue(stack, ability, stat.getId(), level)));
 
-            var component = ScreenUtils.stylizeWidthReplacement(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), ability.length());
+            var component = ScreenUtils.stylizeWithReplacement(Component.translatable("tooltip.relics." + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + ".ability." + ability + ".description", placeholders.toArray()), 1F, Style.EMPTY.withFont(ScreenUtils.ILLAGER_ALT_FONT), ability.length());
 
             for (FormattedCharSequence line : font.split(component, 340)) {
                 guiGraphics.drawString(font, line, (x + 112) * 2, (y + 74) * 2 + yOff, 0x662f13, false);

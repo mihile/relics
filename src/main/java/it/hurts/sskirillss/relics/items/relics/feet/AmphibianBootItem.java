@@ -16,8 +16,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
-import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootCollections;
-import it.hurts.sskirillss.relics.items.relics.base.data.misc.StatIcons;
+import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import net.minecraft.client.model.EntityModel;
@@ -54,13 +53,11 @@ public class AmphibianBootItem extends RelicItem implements IRenderableCurio {
                 .abilities(AbilitiesData.builder()
                         .ability(AbilityData.builder("swimming")
                                 .stat(StatData.builder("speed")
-                                        .icon(StatIcons.SPEED)
                                         .initialValue(0.005D, 0.01D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25D)
                                         .formatValue(value -> MathUtils.round(value * 100 * 4, 1))
                                         .build())
                                 .stat(StatData.builder("duration")
-                                        .icon(StatIcons.DURATION)
                                         .initialValue(15D, 35D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
                                         .formatValue(value -> MathUtils.round(value / 5, 1))
@@ -68,13 +65,11 @@ public class AmphibianBootItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("slipping")
                                 .stat(StatData.builder("speed")
-                                        .icon(StatIcons.SPEED)
                                         .initialValue(0.005D, 0.01D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> MathUtils.round(value * 100 * 4, 1))
                                         .build())
                                 .stat(StatData.builder("duration")
-                                        .icon(StatIcons.DURATION)
                                         .initialValue(15D, 25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
                                         .formatValue(value -> MathUtils.round(value / 5, 1))
@@ -82,7 +77,6 @@ public class AmphibianBootItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .ability(AbilityData.builder("gills")
                                 .stat(StatData.builder("chance")
-                                        .icon(StatIcons.CHANCE)
                                         .initialValue(0.01D, 0.1D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.35D)
                                         .formatValue(value -> MathUtils.round(value * 100, 1))
@@ -91,7 +85,7 @@ public class AmphibianBootItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootCollections.AQUATIC)
+                        .entry(LootEntries.WILDCARD, LootEntries.AQUATIC)
                         .build())
                 .build();
     }
