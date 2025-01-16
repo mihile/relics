@@ -1,126 +1,64 @@
 package it.hurts.sskirillss.relics.items.relics.charm;
 
 import it.hurts.sskirillss.relics.entities.SporeEntity;
+import it.hurts.sskirillss.relics.init.DataComponentRegistry;
 import it.hurts.sskirillss.relics.init.EntityRegistry;
-import it.hurts.sskirillss.relics.init.ItemRegistry;
 import it.hurts.sskirillss.relics.items.relics.base.RelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.data.RelicData;
-import it.hurts.sskirillss.relics.items.relics.base.data.cast.CastData;
-import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.CastStage;
-import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.CastType;
-import it.hurts.sskirillss.relics.items.relics.base.data.cast.misc.PredicateType;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.AbilitiesData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.AbilityData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.LevelingData;
-import it.hurts.sskirillss.relics.items.relics.base.data.leveling.StatData;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.*;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemColor;
+import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.GemShape;
 import it.hurts.sskirillss.relics.items.relics.base.data.leveling.misc.UpgradeOperation;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.LootData;
 import it.hurts.sskirillss.relics.items.relics.base.data.loot.misc.LootEntries;
+import it.hurts.sskirillss.relics.items.relics.base.data.style.BeamsData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
-import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
-import it.hurts.sskirillss.relics.utils.ParticleUtils;
-import it.hurts.sskirillss.relics.utils.Reference;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import top.theillusivec4.curios.api.SlotContext;
-
-import java.util.Random;
-
-import static it.hurts.sskirillss.relics.init.DataComponentRegistry.CHARGE;
 
 public class SporeSackItem extends RelicItem {
     @Override
     public RelicData constructDefaultRelicData() {
         return RelicData.builder()
                 .abilities(AbilitiesData.builder()
-                        .ability(AbilityData.builder("spore")
-                                .maxLevel(10)
-                                .stat(StatData.builder("size")
-                                        .initialValue(0.1D, 0.5D)
+                        .ability(AbilityData.builder("spore_mist")
+                                .stat(StatData.builder("amount")
+                                        .initialValue(3, 8)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
-                                        .formatValue(value -> MathUtils.round(value, 2))
-                                        .build())
-                                .stat(StatData.builder("damage")
-                                        .initialValue(0.25D, 0.5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1D)
-                                        .formatValue(value -> MathUtils.round(value, 2))
-                                        .build())
-                                .stat(StatData.builder("cooldown")
-                                        .initialValue(15D, 10D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, -0.1D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
-                                        .build())
-                                .stat(StatData.builder("duration")
-                                        .initialValue(2D, 4D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.2D)
-                                        .formatValue(value -> MathUtils.round(value, 1))
-                                        .build())
-                                .build())
-                        .ability(AbilityData.builder("buffer")
-                                .requiredLevel(5)
-                                .maxLevel(10)
-                                .stat(StatData.builder("capacity")
-                                        .initialValue(2D, 5D)
-                                        .upgradeModifier(UpgradeOperation.ADD, 1D)
                                         .formatValue(value -> (int) MathUtils.round(value, 0))
                                         .build())
-                                .stat(StatData.builder("chance")
-                                        .initialValue(0.025D, 0.075D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1)
-                                        .formatValue(value -> MathUtils.round(value * 100, 1))
-                                        .build())
-                                .build())
-                        .ability(AbilityData.builder("multiplying")
-                                .requiredLevel(10)
-                                .maxLevel(10)
-                                .stat(StatData.builder("chance")
-                                        .initialValue(0.05D, 0.15D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.128)
-                                        .formatValue(value -> (int) Math.round(MathUtils.round(value, 3) * 100))
-                                        .build())
-                                .stat(StatData.builder("size")
-                                        .initialValue(0.05D, 0.1D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.1775)
-                                        .formatValue(value -> (int) Math.round(MathUtils.round(value, 3) * 100))
-                                        .build())
-                                .stat(StatData.builder("amount")
-                                        .initialValue(0.05D, 0.15D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.4)
-                                        .formatValue(value -> MathUtils.round(value, 2))
-                                        .build())
-                                .build())
-                        .ability(AbilityData.builder("explosion")
-                                .requiredLevel(15)
-                                .maxLevel(10)
-                                .active(CastData.builder()
-                                        .type(CastType.INSTANTANEOUS)
-                                        .predicate("spore", PredicateType.CAST, (player, stack) -> stack.getOrDefault(CHARGE, 0) > 0)
-                                        .build())
-                                .stat(StatData.builder("size")
-                                        .initialValue(0.05D, 0.25D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.15D)
-                                        .formatValue(value -> MathUtils.round(value, 2))
+                                .stat(StatData.builder("damage")
+                                        .initialValue(0.1D, 0.25D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.2D)
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
                                 .build())
                         .build())
-                .leveling(new LevelingData(100, 20, 100))
+                .leveling(LevelingData.builder()
+                        .initialCost(100)
+                        .maxLevel(10)
+                        .step(100)
+                        .sources(LevelingSourcesData.builder()
+                                .source(LevelingSourceData.abilityBuilder("spore_mist")
+                                        .initialValue(1)
+                                        .gem(GemShape.SQUARE, GemColor.YELLOW)
+                                        .build())
+                                .build())
+                        .build())
                 .style(StyleData.builder()
                         .tooltip(TooltipData.builder()
                                 .borderTop(0xff582f27)
                                 .borderBottom(0xff503f3a)
                                 .textured(true)
+                                .build())
+                        .beams(BeamsData.builder()
+                                .startColor(0xFF00FF00)
+                                .endColor(0x00FFFF00)
                                 .build())
                         .build())
                 .loot(LootData.builder()
@@ -129,102 +67,69 @@ public class SporeSackItem extends RelicItem {
                 .build();
     }
 
-    public int getMaxSpores(ItemStack stack) {
-        return (int) Math.round(isAbilityUnlocked(stack, "buffer") ? getStatValue(stack, "buffer", "capacity") : 1);
+    public boolean isToggled(ItemStack stack) {
+        return stack.getOrDefault(DataComponentRegistry.TOGGLED, false);
     }
 
-    public int getSpores(ItemStack stack) {
-        return stack.getOrDefault(CHARGE, 0);
+    public void setToggled(ItemStack stack, boolean isToggled) {
+        stack.set(DataComponentRegistry.TOGGLED, isToggled);
     }
 
-    public void setSpores(ItemStack stack, int amount) {
-        stack.set(CHARGE, Mth.clamp(amount, 0, getMaxSpores(stack)));
+    public int getCharges(ItemStack stack) {
+        return stack.getOrDefault(DataComponentRegistry.CHARGE, 0);
     }
 
-    public void addSpores(ItemStack stack, int amount) {
-        if (isAbilityUnlocked(stack, "buffer") && amount < 0
-                && new Random().nextFloat() <= getStatValue(stack, "buffer", "chance"))
-            return;
-
-        setSpores(stack, getSpores(stack) + amount);
+    public void setCharges(ItemStack stack, int charges) {
+        stack.set(DataComponentRegistry.CHARGE, charges);
     }
 
-    @Override
-    public void castActiveAbility(ItemStack stack, Player player, String ability, CastType type, CastStage stage) {
-        Level level = player.getCommandSenderWorld();
-        RandomSource random = level.getRandom();
-
-        if (ability.equals("explosion")) {
-            if (getSpores(stack) > 0) {
-                ParticleUtils.createBall(ParticleTypes.SPIT, player.position().add(0, player.getBbHeight() / 2F, 0), level, 2, 0.5F);
-                level.playSound(null, player.blockPosition(), SoundEvents.PUFFER_FISH_BLOW_OUT, SoundSource.MASTER, 1F, 1F);
-
-                while (getSpores(stack) > 0) {
-                    float mul = player.getBbHeight() / 1.5F;
-                    float speed = 0.25F + random.nextFloat() * 0.2F;
-                    Vec3 motion = new Vec3(MathUtils.randomFloat(random) * speed, speed, MathUtils.randomFloat(random) * speed);
-
-                    SporeEntity spore = new SporeEntity(EntityRegistry.SPORE.get(), level);
-
-                    spore.setOwner(player);
-                    spore.setStack(stack);
-                    spore.setDeltaMovement(motion);
-                    spore.setPos(player.position().add(0, mul, 0).add(motion.normalize().scale(mul)));
-                    spore.setSize((float) Math.min(player.getMaxHealth(), 0.1F + (player.getMaxHealth() - player.getHealth()) * getStatValue(stack, "explosion", "size")));
-
-                    level.addFreshEntity(spore);
-
-                    addSpores(stack, -1);
-                }
-            }
-        }
+    public void addCharges(ItemStack stack, int charges) {
+        setCharges(stack, Math.clamp(getCharges(stack) + charges, 0, (int) Math.round(getStatValue(stack, "spore_mist", "amount"))));
     }
 
     @Override
     public void curioTick(SlotContext slotContext, ItemStack stack) {
-        if (!(slotContext.entity() instanceof Player player) || player.level().isClientSide() || getSpores(stack) >= getMaxSpores(stack)
-                || player.tickCount % Math.round(getStatValue(stack, "spore", "cooldown") * 20) != 0)
+        if (!(slotContext.entity() instanceof Player player))
             return;
 
-        addSpores(stack, 1);
-    }
+        var charges = getCharges(stack);
+        var isToggled = isToggled(stack);
 
-    @EventBusSubscriber(modid = Reference.MODID)
-    public static class Events {
-        @SubscribeEvent
-        public static void onLivingHurt(LivingIncomingDamageEvent event) {
-            if (!(event.getEntity() instanceof Player player))
-                return;
+        var time = player.tickCount + (slotContext.index() * 10);
 
-            ItemStack stack = EntityUtils.findEquippedCurio(player, ItemRegistry.SPORE_SACK.get());
+        var percentageMedian = 0.5D;
+        var percentage = player.getHealth() / player.getMaxHealth();
 
-            if (!(stack.getItem() instanceof SporeSackItem relic) || relic.getSpores(stack) < 1)
-                return;
+        if (isToggled) {
+            if (charges > 0) {
+                var speed = 3D;
 
-            Level level = player.level();
+                if (time % speed != 0)
+                    return;
 
-            if (level.isClientSide())
-                return;
+                var level = player.getCommandSenderWorld();
 
-            RandomSource random = player.getRandom();
+                var cycle = charges * 1D;
+                var angle = (Math.floor(time / speed) % cycle) / cycle * 2D * Math.PI;
 
-            float mul = player.getBbHeight() / 1.5F;
-            float speed = 0.25F + random.nextFloat() * 0.2F;
-            Vec3 motion = new Vec3(MathUtils.randomFloat(random) * speed, speed, MathUtils.randomFloat(random) * speed);
+                var entity = new SporeEntity(EntityRegistry.SPORE.get(), level);
 
-            SporeEntity spore = new SporeEntity(EntityRegistry.SPORE.get(), level);
+                entity.setOwner(player);
+                entity.setRelicStack(stack);
+                entity.setPos(player.position().add(0F, player.getBbHeight() / 2F, 0F));
+                entity.setDeltaMovement(Math.cos(angle) * 0.5F, 0.35F, Math.sin(angle) * 0.5F);
+                entity.setDamage((float) ((player.getMaxHealth() - player.getHealth()) * getStatValue(stack, "spore_mist", "damage")));
 
-            spore.setOwner(player);
-            spore.setStack(stack.copy());
-            spore.setDeltaMovement(motion);
-            spore.setPos(player.position().add(0, mul, 0).add(motion.normalize().scale(mul)));
-            spore.setSize((float) Math.min(player.getMaxHealth(), 0.1F + event.getAmount() * relic.getStatValue(stack, "spore", "size")));
+                level.addFreshEntity(entity);
 
-            level.addFreshEntity(spore);
+                level.playSound(null, player.blockPosition(), SoundEvents.PUFFER_FISH_FLOP, SoundSource.MASTER, 1F, 1.5F);
 
-            relic.addSpores(stack, -1);
-
-            relic.spreadRelicExperience(player, stack, 1);
+                addCharges(stack, -1);
+            } else if (percentage > percentageMedian)
+                setToggled(stack, false);
+        } else if (percentage < percentageMedian) {
+            setToggled(stack, true);
+            setCharges(stack, (int) Math.round(getStatValue(stack, "spore_mist", "amount")));
         }
     }
 }

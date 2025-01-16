@@ -50,7 +50,7 @@ public class EntityRegistry {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SporeEntity>> SPORE = ENTITIES.register("spore", () ->
             EntityType.Builder.<SporeEntity>of(SporeEntity::new, MobCategory.MISC)
-                    .sized(0.2F, 0.2F)
+                    .sized(0.3F, 0.3F)
                     .build("spore")
     );
 

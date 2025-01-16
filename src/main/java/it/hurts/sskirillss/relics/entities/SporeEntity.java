@@ -1,8 +1,12 @@
 package it.hurts.sskirillss.relics.entities;
 
+import it.hurts.octostudios.octolib.modules.particles.OctoRenderManager;
+import it.hurts.octostudios.octolib.modules.particles.trail.TrailProvider;
+import it.hurts.sskirillss.relics.entities.misc.ITargetableEntity;
 import it.hurts.sskirillss.relics.init.EffectRegistry;
-import it.hurts.sskirillss.relics.init.EntityRegistry;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
+import it.hurts.sskirillss.relics.network.NetworkHandler;
+import it.hurts.sskirillss.relics.network.packets.sync.S2CEntityTargetPacket;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
 import it.hurts.sskirillss.relics.utils.ParticleUtils;
@@ -12,59 +16,43 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.List;
 
-public class SporeEntity extends ThrowableProjectile {
-    private static final EntityDataAccessor<Float> SIZE = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> STUCK = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> LIFETIME = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<ItemStack> STACK = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.ITEM_STACK);
+public class SporeEntity extends ThrowableProjectile implements ITargetableEntity, TrailProvider {
+    private static final EntityDataAccessor<ItemStack> RELIC_STACK = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Float> DAMAGE = SynchedEntityData.defineId(SporeEntity.class, EntityDataSerializers.FLOAT);
 
-    public void setSize(float amount) {
-        this.getEntityData().set(SIZE, amount);
+    public void setRelicStack(ItemStack stack) {
+        this.getEntityData().set(RELIC_STACK, stack);
     }
 
-    public float getSize() {
-        return this.getEntityData().get(SIZE);
+    public ItemStack getRelicStack() {
+        return this.getEntityData().get(RELIC_STACK);
     }
 
-    public void setStuck(boolean value) {
-        this.getEntityData().set(STUCK, value);
+    public void setDamage(float damage) {
+        this.getEntityData().set(DAMAGE, damage);
     }
 
-    public boolean isStuck() {
-        return this.getEntityData().get(STUCK);
+    public float getDamage() {
+        return this.getEntityData().get(DAMAGE);
     }
 
-    public void setLifetime(int amount) {
-        this.getEntityData().set(LIFETIME, amount);
-    }
-
-    public int getLifetime() {
-        return this.getEntityData().get(LIFETIME);
-    }
-
-    public void setStack(ItemStack stack) {
-        this.getEntityData().set(STACK, stack);
-    }
-
-    public ItemStack getStack() {
-        return this.getEntityData().get(STACK);
-    }
+    private LivingEntity target;
 
     public SporeEntity(EntityType<? extends ThrowableProjectile> entityType, Level level) {
         super(entityType, level);
@@ -74,135 +62,112 @@ public class SporeEntity extends ThrowableProjectile {
     public void tick() {
         super.tick();
 
-        ItemStack stack = getStack();
+        var level = getCommandSenderWorld();
+        var particleCenter = this.position().add(this.getDeltaMovement().scale(-1F));
 
-        if (!(stack.getItem() instanceof IRelicItem relic)) {
-            this.discard();
+        if (tickCount > 3)
+            for (int i = 0; i < 3; i++)
+                level.addParticle(ParticleUtils.constructSimpleSpark(new Color(50 + random.nextInt(100), 150 + random.nextInt(100), 0), 0.01F + random.nextFloat() * Math.min(tickCount * 0.01F, 0.1F), 5 + random.nextInt(3), 0.9F),
+                        particleCenter.x() + MathUtils.randomFloat(random) * 0.05F, particleCenter.y() + MathUtils.randomFloat(random) * 0.05F, particleCenter.z() + MathUtils.randomFloat(random) * 0.05F, 0F, 0F, 0F);
+
+        if (target == null) {
+            if (level.isClientSide())
+                return;
+
+            var targets = locateNearestTargets();
+
+            if (targets.isEmpty())
+                return;
+
+            setTarget(targets.get(random.nextInt(targets.size())));
+
+            NetworkHandler.sendToClientsTrackingEntity(new S2CEntityTargetPacket(this.getId(), target.getId()), this);
 
             return;
         }
 
-        if (this.isStuck())
-            this.setDeltaMovement(0, 0, 0);
+        var direction = target.position().subtract(this.position()).normalize();
+        var motion = this.getDeltaMovement();
 
-        Level level = level();
+        var factor = Math.clamp(tickCount * 0.05F, 0F, 1F);
 
-        if (!level.isClientSide()) {
-            if (isStuck())
-                setLifetime(getLifetime() + 1);
+        var deltaX = motion.x + (direction.x * factor - motion.x) * factor;
+        var deltaY = motion.z + (direction.z * factor - motion.z) * factor;
 
-            if (getLifetime() > relic.getStatValue(stack, "spore", "duration") * 20) {
-                level.playSound(null, this.blockPosition(), SoundEvents.PUFFER_FISH_BLOW_UP, SoundSource.MASTER, 1F, 1F + random.nextFloat());
+        this.setDeltaMovement(new Vec3(deltaX, motion.y, deltaY));
+    }
 
-                double inlinedSize = Math.pow(Math.log10(1 + getSize()), 1D / 3D);
-
-                ParticleUtils.createBall(ParticleUtils.constructSimpleSpark(new Color(100 + level.getRandom().nextInt(50), 255, 0),
-                                (float) (inlinedSize * 0.35F), 40, 0.9F),
-                        this.position().add(0, inlinedSize / 3, 0), level, (int) Math.ceil(1 + inlinedSize), (float) (inlinedSize / 2D));
-
-                if (this.getOwner() instanceof Player player) {
-                    RandomSource random = player.getRandom();
-
-                    for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(1F + (Math.pow(Math.log10(1 + getSize()), 1D / 3D) / 2F)))) {
-                        if (entity.getStringUUID().equals(player.getStringUUID()))
-                            continue;
-
-                        if (EntityUtils.hurt(entity, level.damageSources().thrown(this, player), (float) (getSize() * relic.getStatValue(stack, "spore", "damage")))) {
-                            entity.addEffect(new MobEffectInstance(MobEffects.POISON, 100));
-                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100));
-                            entity.addEffect(new MobEffectInstance(EffectRegistry.ANTI_HEAL, 100));
-                        }
-                    }
-
-                    if (getSize() >= 1) {
-                        int count = (int) Math.ceil(Math.pow(getSize(), relic.getStatValue(stack, "multiplying", "amount")));
-
-                        for (int i = 0; i < count; i++) {
-                            if (random.nextFloat() > relic.getStatValue(stack, "multiplying", "chance"))
-                                break;
-
-                            float mul = this.getBbHeight() / 1.5F;
-                            float speed = 0.1F + random.nextFloat() * 0.2F;
-                            Vec3 motion = new Vec3(MathUtils.randomFloat(random) * speed, speed, MathUtils.randomFloat(random) * speed);
-
-                            SporeEntity spore = new SporeEntity(EntityRegistry.SPORE.get(), level);
-
-                            spore.setOwner(player);
-                            spore.setStack(stack);
-                            spore.setDeltaMovement(motion);
-                            spore.setPos(this.position().add(0, mul, 0).add(motion.normalize().scale(mul)));
-                            spore.setSize((float) (this.getSize() * relic.getStatValue(stack, "multiplying", "size")));
-
-                            level.addFreshEntity(spore);
-
-                            relic.spreadRelicExperience(player, stack, 1);
-                        }
-                    }
-                }
-
-                this.discard();
-            }
-        }
-
-        RandomSource random = level.getRandom();
-
-        double inlinedSize = Math.pow(Math.log10(1 + getSize()), 1D / 3D);
-
-        if (isStuck()) {
-            ParticleUtils.createBall(ParticleUtils.constructSimpleSpark(new Color(random.nextInt(200), 255, 0), (float) (inlinedSize * 0.25F), 40, 0.95F),
-                    this.position().add(0, inlinedSize / 6, 0), level, 0, (float) (inlinedSize * 0.025F));
-        } else {
-            level.addParticle(ParticleUtils.constructSimpleSpark(new Color(random.nextInt(200), 255, 0), (float) (inlinedSize * 0.25F), 40, 0.9F),
-                    this.getX(), this.getY() + (inlinedSize / 6F), this.getZ(), MathUtils.randomFloat(random) * 0.025F,
-                    MathUtils.randomFloat(random) * 0.025F, MathUtils.randomFloat(random) * 0.025F);
-        }
-
-        if (!(this.getOwner() instanceof Player player))
-            return;
-
-        if (isStuck()) {
-            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox())) {
-                if (entity.getStringUUID().equals(player.getStringUUID()))
-                    continue;
-
-                setLifetime((int) Math.max(getLifetime(), Math.round(relic.getStatValue(stack, "spore", "duration") * 20) - 20));
-
-                break;
-            }
-        }
+    public List<LivingEntity> locateNearestTargets() {
+        return level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(32D)).stream()
+                .filter(entry -> !entry.isDeadOrDying()
+                        && entry.hasLineOfSight(this)
+                        && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entry))
+                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entry))
+                .toList();
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult result) {
-        this.setDeltaMovement(0, 0, 0);
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
 
-        this.setStuck(true);
+        OctoRenderManager.registerProvider(this);
+    }
+
+    @Override
+    public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
+
+        var level = getCommandSenderWorld();
+        var vec = this.position();
+
+        level.playSound(null, this.blockPosition(), SoundEvents.PUFFER_FISH_BLOW_UP, SoundSource.MASTER, 0.5F, 1.5F + random.nextFloat() * 0.5F);
+
+        for (int i = 0; i < 3; i++)
+            ParticleUtils.createBall(ParticleUtils.constructSimpleSpark(new Color(50 + random.nextInt(100), 150 + random.nextInt(100), 0), 0.1F + random.nextFloat() * 0.2F, 20 + random.nextInt(10), 0.95F),
+                    vec, level, 1, 0.025F + random.nextFloat() * 0.15F);
+
+    }
+
+    @Override
+    protected void onHit(HitResult result) {
+        super.onHit(result);
+
+        if (this.getOwner() instanceof Player player && result instanceof EntityHitResult entityResult && entityResult.getEntity() instanceof LivingEntity entity && !entity.getStringUUID().equals(player.getStringUUID())) {
+            entity.invulnerableTime = 0;
+
+            var stack = getRelicStack();
+
+            if (entity.hurt(getCommandSenderWorld().damageSources().thrown(this, player), getDamage())) {
+                if (stack.getItem() instanceof IRelicItem relic)
+                    relic.spreadRelicExperience(player, stack, 1);
+
+                entity.addEffect(new MobEffectInstance(EffectRegistry.ANTI_HEAL, 0, 20 * 5, false, false), player);
+            }
+        }
+
+        this.discard();
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(SIZE, 0.5F);
-        builder.define(LIFETIME, 0);
-        builder.define(STUCK, false);
-        builder.define(STACK, ItemStack.EMPTY);
+        builder.define(RELIC_STACK, ItemStack.EMPTY);
+        builder.define(DAMAGE, 1F);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        setSize(compound.getFloat("size"));
-        setStuck(compound.getBoolean("stuck"));
-        setLifetime(compound.getInt("lifetime"));
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
 
-        setStack(ItemStack.parseOptional(this.registryAccess(), compound.getCompound("stack")));
+        tag.put("relic_stack", getRelicStack().save(this.registryAccess()));
+        tag.putFloat("damage", getDamage());
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.putFloat("size", getSize());
-        compound.putBoolean("stuck", isStuck());
-        compound.putInt("lifetime", getLifetime());
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
 
-        getStack().save(this.registryAccess(), compound.getCompound("stack"));
+        setRelicStack(ItemStack.parseOptional(this.registryAccess(), tag.getCompound("relic_stack")));
+        setDamage(tag.getFloat("damage"));
     }
 
     @Override
@@ -211,23 +176,52 @@ public class SporeEntity extends ThrowableProjectile {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
-        if (SIZE.equals(pKey))
-            this.refreshDimensions();
-
-        super.onSyncedDataUpdated(pKey);
+    public @Nullable LivingEntity getTarget() {
+        return target;
     }
 
-//    @Nonnull
-//    @Override
-//    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-//        return NetworkHooks.getEntitySpawningPacket(this);
-//    }
+    @Override
+    public void setTarget(LivingEntity target) {
+        this.target = target;
+    }
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        float inlinedSize = (float) Math.pow(Math.log10(1 + getSize()), 1D / 3D);
+    public Vec3 getTrailPosition(float partialTicks) {
+        return getPosition(partialTicks).add(getDeltaMovement().scale(-1));
+    }
 
-        return EntityDimensions.scalable(inlinedSize / 2F, inlinedSize / 2F);
+    @Override
+    public int getTrailUpdateFrequency() {
+        return 1;
+    }
+
+    @Override
+    public boolean isTrailAlive() {
+        return isAlive();
+    }
+
+    @Override
+    public boolean isTrailGrowing() {
+        return tickCount > 2;
+    }
+
+    @Override
+    public int getTrailMaxLength() {
+        return 3;
+    }
+
+    @Override
+    public int getTrailFadeInColor() {
+        return 0xFF55FF00;
+    }
+
+    @Override
+    public int getTrailFadeOutColor() {
+        return 0x8080FF00;
+    }
+
+    @Override
+    public double getTrailScale() {
+        return 0.075F;
     }
 }
