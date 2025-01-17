@@ -54,7 +54,7 @@ public class IceSkatesItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.TAIGA, LootEntries.FROST)
+                        .entry(LootEntries.FROST)
                         .build())
                 .build();
     }

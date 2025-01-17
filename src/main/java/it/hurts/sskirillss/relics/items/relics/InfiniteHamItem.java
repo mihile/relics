@@ -145,7 +145,7 @@ public class InfiniteHamItem extends RelicItem {
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE)
+                        .entry(LootEntries.VILLAGE)
                         .build())
                 .build();
     }

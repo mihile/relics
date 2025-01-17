@@ -87,7 +87,7 @@ public class ShadowGlaiveItem extends RelicItem {
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
+                        .entry(LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }

@@ -1,7 +1,7 @@
 package it.hurts.sskirillss.relics.level;
 
 import com.google.common.base.Suppliers;
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,11 +10,11 @@ import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
@@ -36,37 +37,34 @@ import java.util.regex.PatternSyntaxException;
 public class RelicLootModifier extends LootModifier {
     public static final Supplier<MapCodec<RelicLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, RelicLootModifier::new)));
 
-    public static final Multimap<IRelicItem, LootEntryCache> LOOT_ENTRIES = LinkedHashMultimap.create();
+    public static final Multimap<String, LootEntryCache> LOOT_ENTRIES = HashMultimap.create();
 
     public RelicLootModifier(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
 
+    private static final float CHANCE = 0.35F;
+
     @Nonnull
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        var id = context.getQueriedLootTableId().toString();
         var entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         var pos = context.getParamOrNull(LootContextParams.ORIGIN);
 
-        if (pos == null || entity == null)
+        var random = context.getRandom();
+
+        if (!LOOT_ENTRIES.containsKey(id) || pos == null || entity == null || random.nextFloat() > CHANCE)
             return generatedLoot;
 
         var blockPos = new BlockPos((int) pos.x(), (int) pos.y(), (int) pos.z());
         var level = entity.level();
 
+        List<Item> entries = new ArrayList<>();
+
         loop:
 
-        for (var entry : LOOT_ENTRIES.entries()) {
-            var item = entry.getKey().getItem();
-
-            if (item == null)
-                continue;
-
-            var cache = entry.getValue();
-
-            if (context.getRandom().nextFloat() > cache.getChance())
-                continue;
-
+        for (var cache : LOOT_ENTRIES.get(id)) {
             for (var dimension : cache.getDimensions()) {
                 if (!level.dimension().location().toString().equals(dimension))
                     continue;
@@ -75,17 +73,15 @@ public class RelicLootModifier extends LootModifier {
                     if (!level.getBiome(blockPos).is(ResourceLocation.parse(biome)))
                         continue;
 
-                    for (var table : cache.getTables()) {
-                        if (!table.equals(context.getQueriedLootTableId().toString()))
-                            continue;
+                    entries.add(cache.getItem());
 
-                        generatedLoot.add(item.getDefaultInstance());
-
-                        continue loop;
-                    }
+                    continue loop;
                 }
             }
         }
+
+        if (!entries.isEmpty())
+            generatedLoot.add(entries.get(random.nextInt(entries.size())).getDefaultInstance());
 
         return generatedLoot;
     }
@@ -101,68 +97,39 @@ public class RelicLootModifier extends LootModifier {
         if (server == null)
             return;
 
-        LOOT_ENTRIES.removeAll(relic);
+        LOOT_ENTRIES.entries().removeIf(entry -> entry.getValue().getItem().equals(relic.getItem()));
 
-        for (var entry : relic.getLootData().getEntries()) {
-            List<String> dimensions = new ArrayList<>();
+        var registries = server.reloadableRegistries();
 
-            for (var dimension : entry.getDimensions()) {
-                for (var candidate : server.reloadableRegistries().getKeys(Registries.DIMENSION_TYPE)) {
-                    var id = candidate.toString();
+        var dimensionKeys = registries.getKeys(Registries.DIMENSION_TYPE);
+        var biomeKeys = registries.getKeys(Registries.BIOME);
+        var tableKeys = registries.getKeys(Registries.LOOT_TABLE);
 
-                    boolean isValid;
+        for (var entry : relic.getLootData().getEntries())
+            for (var table : filterRegex(tableKeys, entry.getTables()))
+                LOOT_ENTRIES.put(table, new LootEntryCache(filterRegex(dimensionKeys, entry.getDimensions()), filterRegex(biomeKeys, entry.getBiomes()), relic.getItem()));
+    }
 
-                    try {
-                        isValid = id.matches(dimension);
-                    } catch (PatternSyntaxException exception) {
-                        isValid = id.equals(dimension);
-                    }
+    private static List<String> filterRegex(Collection<ResourceLocation> keys, List<String> patterns) {
+        List<String> entries = new ArrayList<>();
 
-                    if (isValid)
-                        dimensions.add(id);
+        for (var pattern : patterns) {
+            for (var key : keys) {
+                var id = key.toString();
+                boolean isValid;
+
+                try {
+                    isValid = id.matches(pattern);
+                } catch (PatternSyntaxException exception) {
+                    isValid = id.equals(pattern);
                 }
+
+                if (isValid)
+                    entries.add(id);
             }
-
-            List<String> biomes = new ArrayList<>();
-
-            for (var biome : entry.getBiomes()) {
-                for (var candidate : server.reloadableRegistries().getKeys(Registries.BIOME)) {
-                    var id = candidate.toString();
-
-                    boolean isValid;
-
-                    try {
-                        isValid = id.matches(biome);
-                    } catch (PatternSyntaxException exception) {
-                        isValid = id.equals(biome);
-                    }
-
-                    if (isValid)
-                        biomes.add(id);
-                }
-            }
-
-            List<String> tables = new ArrayList<>();
-
-            for (var table : entry.getTables()) {
-                for (var candidate : server.reloadableRegistries().getKeys(Registries.LOOT_TABLE)) {
-                    var id = candidate.toString();
-
-                    boolean isValid;
-
-                    try {
-                        isValid = id.matches(table);
-                    } catch (PatternSyntaxException exception) {
-                        isValid = id.equals(table);
-                    }
-
-                    if (isValid)
-                        tables.add(id);
-                }
-            }
-
-            LOOT_ENTRIES.put(relic, new LootEntryCache(dimensions, biomes, tables, entry.getChance()));
         }
+
+        return entries;
     }
 
     @EventBusSubscriber
@@ -182,13 +149,11 @@ public class RelicLootModifier extends LootModifier {
     }
 
     @Data
-    @NoArgsConstructor
     @AllArgsConstructor
     public static class LootEntryCache {
-        private List<String> dimensions = new ArrayList<>();
-        private List<String> biomes = new ArrayList<>();
-        private List<String> tables = new ArrayList<>();
+        private List<String> dimensions;
+        private List<String> biomes;
 
-        private float chance = 1F;
+        private Item item;
     }
 }

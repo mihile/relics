@@ -76,7 +76,7 @@ public class EnderHandItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.THE_END, LootEntries.END_LIKE)
+                        .entry(LootEntries.THE_END, LootEntries.END_LIKE)
                         .build())
                 .build();
     }

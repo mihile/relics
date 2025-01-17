@@ -63,7 +63,7 @@ public class MagicMirrorItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.CAVE, LootEntries.MINESHAFT)
+                        .entry(LootEntries.CAVE, LootEntries.MINESHAFT)
                         .build())
                 .build();
     }

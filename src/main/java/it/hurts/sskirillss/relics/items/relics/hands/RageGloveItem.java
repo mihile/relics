@@ -139,7 +139,7 @@ public class RageGloveItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 20, 100))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
+                        .entry(LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
                         .build())
                 .build();
     }

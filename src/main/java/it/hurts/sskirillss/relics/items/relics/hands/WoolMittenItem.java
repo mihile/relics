@@ -61,7 +61,7 @@ public class WoolMittenItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.FROST, LootEntries.TAIGA, LootEntries.MOUNTAIN)
+                        .entry(LootEntries.FROST, LootEntries.TAIGA, LootEntries.MOUNTAIN)
                         .build())
                 .build();
     }

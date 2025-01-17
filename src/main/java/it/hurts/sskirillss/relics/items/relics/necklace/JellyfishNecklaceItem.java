@@ -72,7 +72,7 @@ public class JellyfishNecklaceItem extends RelicItem implements IRenderableCurio
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.AQUATIC)
+                        .entry(LootEntries.AQUATIC)
                         .build())
                 .build();
     }
