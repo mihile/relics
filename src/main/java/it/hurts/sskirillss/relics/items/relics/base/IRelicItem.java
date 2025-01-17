@@ -193,7 +193,7 @@ public interface IRelicItem {
         Map<String, StatData> stats = getAbilityData(ability).getStats();
 
         if (stats.isEmpty())
-            return 0;
+            return getMaxQuality();
 
         double sum = 0;
 
