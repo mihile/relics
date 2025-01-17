@@ -70,7 +70,7 @@ public class SporeEntity extends ThrowableProjectile implements ITargetableEntit
                 level.addParticle(ParticleUtils.constructSimpleSpark(new Color(50 + random.nextInt(100), 150 + random.nextInt(100), 0), 0.01F + random.nextFloat() * Math.min(tickCount * 0.01F, 0.1F), 5 + random.nextInt(3), 0.9F),
                         particleCenter.x() + MathUtils.randomFloat(random) * 0.05F, particleCenter.y() + MathUtils.randomFloat(random) * 0.05F, particleCenter.z() + MathUtils.randomFloat(random) * 0.05F, 0F, 0F, 0F);
 
-        if (target == null) {
+        if (target == null || target.isDeadOrDying()) {
             if (level.isClientSide())
                 return;
 
@@ -91,10 +91,7 @@ public class SporeEntity extends ThrowableProjectile implements ITargetableEntit
 
         var factor = Math.clamp(tickCount * 0.05F, 0F, 1F);
 
-        var deltaX = motion.x + (direction.x * factor - motion.x) * factor;
-        var deltaY = motion.z + (direction.z * factor - motion.z) * factor;
-
-        this.setDeltaMovement(new Vec3(deltaX, motion.y, deltaY));
+        this.setDeltaMovement(motion.x + (direction.x * factor - motion.x) * factor, motion.y, motion.z + (direction.z * factor - motion.z) * factor);
     }
 
     public List<LivingEntity> locateNearestTargets() {
@@ -140,6 +137,9 @@ public class SporeEntity extends ThrowableProjectile implements ITargetableEntit
             if (entity.hurt(getCommandSenderWorld().damageSources().thrown(this, player), getDamage())) {
                 if (stack.getItem() instanceof IRelicItem relic)
                     relic.spreadRelicExperience(player, stack, 1);
+
+                if (this.isOnFire())
+                    entity.igniteForTicks(this.getRemainingFireTicks());
 
                 entity.addEffect(new MobEffectInstance(EffectRegistry.ANTI_HEAL, 0, 20 * 5, false, false), player);
             }
