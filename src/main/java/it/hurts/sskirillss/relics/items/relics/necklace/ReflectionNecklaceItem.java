@@ -84,7 +84,7 @@ public class ReflectionNecklaceItem extends RelicItem implements IRenderableCuri
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
+                        .entry(LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
                         .build())
                 .build();
     }

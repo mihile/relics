@@ -63,7 +63,7 @@ public class BastionRingItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.BASTION)
+                        .entry(LootEntries.BASTION)
                         .build())
                 .build();
     }

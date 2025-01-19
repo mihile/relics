@@ -72,7 +72,7 @@ public class AquaWalkerItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.AQUATIC)
+                        .entry(LootEntries.AQUATIC)
                         .build())
                 .build();
     }

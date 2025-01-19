@@ -46,7 +46,7 @@ public class LeatherBeltItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 100))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE)
+                        .entry(LootEntries.OVERWORLD)
                         .build())
                 .build();
     }

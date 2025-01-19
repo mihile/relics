@@ -1,6 +1,5 @@
 package it.hurts.sskirillss.relics.items.relics.base.data.loot;
 
-import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,9 +18,6 @@ public class LootEntry {
     private List<String> biomes;
     @Builder.Default
     private List<String> tables;
-
-    @Builder.Default
-    private float chance = 1F;
 
     public static class LootEntryBuilder {
         private List<String> dimensions = new ArrayList<>();

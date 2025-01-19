@@ -84,7 +84,7 @@ public class SpringyBootItem extends RelicItem implements IRenderableCurio {
                                 .build())
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE, LootEntries.MOUNTAIN)
+                        .entry(LootEntries.MOUNTAIN)
                         .build())
                 .build();
     }

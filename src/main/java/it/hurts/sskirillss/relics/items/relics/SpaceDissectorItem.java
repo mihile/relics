@@ -52,7 +52,7 @@ public class SpaceDissectorItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
+                        .entry(LootEntries.NETHER_LIKE, LootEntries.THE_NETHER)
                         .build())
                 .build();
     }

@@ -132,7 +132,7 @@ public class HolyLocketItem extends RelicItem implements IRenderableCurio {
                 .style(StyleData.builder()
                         .build())
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.DESERT)
+                        .entry(LootEntries.DESERT)
                         .build())
                 .build();
     }

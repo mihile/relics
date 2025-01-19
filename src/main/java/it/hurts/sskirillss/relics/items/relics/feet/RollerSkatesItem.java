@@ -46,7 +46,7 @@ public class RollerSkatesItem extends RelicItem {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.VILLAGE, LootEntries.PLAINS)
+                        .entry(LootEntries.OVERWORLD)
                         .build())
                 .build();
     }

@@ -67,7 +67,7 @@ public class MagmaWalkerItem extends RelicItem implements IRenderableCurio {
                         .build())
                 .leveling(new LevelingData(100, 10, 200))
                 .loot(LootData.builder()
-                        .entry(LootEntries.WILDCARD, LootEntries.THE_NETHER, LootEntries.NETHER_LIKE)
+                        .entry(LootEntries.THE_NETHER, LootEntries.NETHER_LIKE)
                         .build())
                 .build();
     }
