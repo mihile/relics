@@ -281,7 +281,7 @@
   "tooltip.relics.spore_sack.ability.explosion.predicate.spore": "주머니의 포자",
 
   "item.relics.ice_breaker": "아이스 브레이커",
-  "tooltip.relics.ice_breaker.description": "«지진» 능력을 발동하기 전, 떨어진 거리 3 블록마다 경험치 +1",
+  "tooltip.relics.ice_breaker.description": "«지진» 능력을 발동한 높이 3 블록마다 경험치 +1",
   "tooltip.relics.ice_breaker.ability.sustainability": "지속성",
   "tooltip.relics.ice_breaker.ability.sustainability.description": "낙하 속도를 증가시키고, 넉백 저항이 증가하며, 미끄러짐을 무효화합니다.",
   "tooltip.relics.ice_breaker.ability.sustainability.stat.modifier.title": "넉백 저항:",
@@ -484,7 +484,7 @@
   "tooltip.relics.phantom_boot.leveling_source.bridge.description": "%2$s 능력으로 구름다리를 생성할 때마다 10%%의 확률로 +%1$s 유물 경험치를 얻습니다.",
 
   "item.relics.springy_boot": "스프링 부츠",
-  "tooltip.relics.springy_boot.description": "유물 소유자에게 특수한 탄력을 부여하여,모든 단단한 표면에서 튕겨 나갈 수 있게 합니다.",
+  "tooltip.relics.springy_boot.description": "유물 소유자에게 특수한 탄력을 부여하여, 모든 단단한 표면에 떨어졌을 시 스프링처럼 튀어 오릅니다",
   "tooltip.relics.springy_boot.ability.bounce": "콩콩이",
   "tooltip.relics.springy_boot.ability.bounce.description": "능력이 활성화되면 모든 단단한 블록에 떨어졌을 때 탄력을 얻어 튕겨 나오게 됩니다. 튕겨 나올 때 플레이어는 떨어진 높이에 기반한 힘으로 공중으로 발사됩니다",
   "tooltip.relics.springy_boot.leveling_source.bounce.title": "탄성",
