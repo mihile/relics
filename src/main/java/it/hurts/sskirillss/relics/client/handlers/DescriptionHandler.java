@@ -59,7 +59,7 @@ public class DescriptionHandler {
         var menu = player.containerMenu;
 
         var oldId = slot == null ? -1 : slot.getContainerSlot();
-        var id = 0;
+        var id = -1;
 
         for (int i = 0; i < menu.slots.size(); i++) {
             var entry = menu.slots.get(i);
@@ -72,8 +72,12 @@ public class DescriptionHandler {
             }
         }
 
-        if (slot == null)
+        if (slot == null || id == -1) {
+            ticksCount = 0;
+            ticksCountOld = 0;
+
             return;
+        }
 
         var stack = slot.getItem();
 
