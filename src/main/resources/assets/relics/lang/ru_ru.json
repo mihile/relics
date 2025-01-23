@@ -3,7 +3,7 @@
 
   "curios.identifier.feet": "Ноги",
 
-  "tooltip.relics.researching.info": "Удерживай [Шифт] для исследования...",
+  "tooltip.relics.researching.info": "Удерживай [%1$s] для исследования...",
 
   "tooltip.relics.relic.tooltip.abilities": "Способности:",
 
@@ -484,5 +484,6 @@
 
   "info.relics.researching.wrong_container": "Работа с реликвией в этом инвентаре невозможна. Перемести предмет в обычный инвентарь игрока и попробуй ещё раз.",
 
-  "key.relics.ability_list": "Открыть интерфейс активных способностей"
+  "key.relics.active_abilities_list": "Открыть интерфейс активных способностей",
+  "key.relics.research_relic": "Исследовать реликвию под курсором"
 }

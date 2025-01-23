@@ -378,7 +378,7 @@ public class HUDRenderHandler {
     public static class GeneralEvents {
         @SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
-            if (!HotkeyRegistry.ABILITY_LIST.isDown() || REFERENCES.isEmpty())
+            if (!HotkeyRegistry.ACTIVE_ABILITIES_LIST.isDown() || REFERENCES.isEmpty())
                 return;
 
             int current = selectedIndex;
@@ -412,7 +412,7 @@ public class HUDRenderHandler {
             else if (mouseDelta < 0)
                 mouseDelta++;
 
-            if (HotkeyRegistry.ABILITY_LIST.isDown()) {
+            if (HotkeyRegistry.ACTIVE_ABILITIES_LIST.isDown()) {
                 AbilityReference ability = getAbilityByIndex(selectedIndex);
 
                 if (ability != null) {
