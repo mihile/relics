@@ -17,7 +17,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -95,11 +94,8 @@ public class SporeEntity extends ThrowableProjectile implements ITargetableEntit
     }
 
     public List<LivingEntity> locateNearestTargets() {
-        return level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(32D)).stream()
-                .filter(entry -> !entry.isDeadOrDying()
-                        && entry.hasLineOfSight(this)
-                        && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entry))
-                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entry))
+        return EntityUtils.gatherPotentialTargets(this, 32)
+                .filter(entity -> (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity)))
                 .toList();
     }
 

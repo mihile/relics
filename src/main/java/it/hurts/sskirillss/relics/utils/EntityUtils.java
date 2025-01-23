@@ -8,11 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,9 +28,11 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class EntityUtils {
     public static void moveTowardsPosition(Entity entity, Vec3 targetPos, double speed) {
@@ -238,5 +242,14 @@ public class EntityUtils {
         });
 
         return items;
+    }
+
+    public static Stream<LivingEntity> gatherPotentialTargets(Entity entity, double radius) {
+        return entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius)).stream()
+                .sorted(Comparator.comparing(entry -> entry.position().distanceTo(entry.position())))
+                .filter(entry -> !(entry instanceof ArmorStand)
+                        && !entry.isDeadOrDying()
+                        && entry.hasLineOfSight(entity)
+                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
     }
 }

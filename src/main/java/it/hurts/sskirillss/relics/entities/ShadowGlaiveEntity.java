@@ -84,13 +84,9 @@ public class ShadowGlaiveEntity extends ThrowableProjectile implements ITargetab
     }
 
     public List<LivingEntity> locateNearestTargets() {
-        return this.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(16D)).stream()
-                .sorted(Comparator.comparing(entity -> entity.position().distanceTo(this.position())))
+        return EntityUtils.gatherPotentialTargets(this, 16)
                 .filter(entity -> (lastTarget == null || !lastTarget.getStringUUID().equals(entity.getStringUUID()))
-                        && !entity.isDeadOrDying()
-                        && entity.hasLineOfSight(this)
-                        && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity))
-                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity))
+                        && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity)))
                 .toList();
     }
 
