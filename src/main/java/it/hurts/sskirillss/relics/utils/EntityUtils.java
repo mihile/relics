@@ -25,6 +25,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotResult;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -176,6 +177,17 @@ public class EntityUtils {
             return ItemStack.EMPTY;
 
         return optional.get().getRight();
+    }
+
+    public static List<ItemStack> findEquippedCurios(Entity entity, Item item) {
+        if (!(entity instanceof Player player))
+            return List.of();
+
+        return CuriosApi.getCuriosInventory(player)
+                .map(inventory -> inventory.findCurios(item).stream()
+                        .map(SlotResult::stack)
+                        .toList())
+                .orElse(List.of());
     }
 
     public static int getExperienceForLevel(int level) {

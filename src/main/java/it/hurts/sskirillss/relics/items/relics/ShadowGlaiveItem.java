@@ -18,6 +18,7 @@ import it.hurts.sskirillss.relics.items.relics.base.data.style.StyleData;
 import it.hurts.sskirillss.relics.items.relics.base.data.style.TooltipData;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.MathUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -107,28 +108,28 @@ public class ShadowGlaiveItem extends RelicItem {
             if (!(source instanceof Player player) || EntityUtils.isAlliedTo(source, target))
                 return;
 
-            var stack = EntityUtils.findEquippedCurio(source, ItemRegistry.SHADOW_GLAIVE.get());
+            for (var stack : EntityUtils.findEquippedCurios(player, ItemRegistry.SHADOW_GLAIVE.get())) {
+                if (!(stack.getItem() instanceof IRelicItem relic) || source.getRandom().nextDouble() > relic.getStatValue(stack, "mayhem", "chance"))
+                    continue;
 
-            if (!(stack.getItem() instanceof IRelicItem relic) || source.getRandom().nextDouble() > relic.getStatValue(stack, "mayhem", "chance"))
-                return;
+                var level = target.getCommandSenderWorld();
 
-            var level = target.getCommandSenderWorld();
+                var entity = new ShadowGlaiveEntity(EntityRegistry.SHADOW_GLAIVE.get(), level);
 
-            var entity = new ShadowGlaiveEntity(EntityRegistry.SHADOW_GLAIVE.get(), level);
+                entity.setDamage((float) (damage * relic.getStatValue(stack, "mayhem", "damage")));
+                entity.setMaxBounces((int) relic.getStatValue(stack, "mayhem", "bounces"));
+                entity.getBouncedTargets().add(target.getStringUUID());
+                entity.setPos(target.getEyePosition());
+                entity.setOwner(source);
 
-            entity.setDamage((float) (damage * relic.getStatValue(stack, "mayhem", "damage")));
-            entity.setMaxBounces((int) relic.getStatValue(stack, "mayhem", "bounces"));
-            entity.getBouncedTargets().add(target.getStringUUID());
-            entity.setPos(target.getEyePosition());
-            entity.setOwner(source);
+                if (relic.canPlayerUseAbility(player, stack, "cloning"))
+                    entity.setChance((float) relic.getStatValue(stack, "cloning", "chance"));
 
-            if (relic.canPlayerUseAbility(player, stack, "cloning"))
-                entity.setChance((float) relic.getStatValue(stack, "cloning", "chance"));
+                if (entity.locateNearestTargets().size() > 1) {
+                    level.addFreshEntity(entity);
 
-            if (entity.locateNearestTargets().size() > 1) {
-                level.addFreshEntity(entity);
-
-                relic.spreadRelicExperience(player, stack, 1);
+                    relic.spreadRelicExperience(player, stack, 1);
+                }
             }
         }
     }
