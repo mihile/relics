@@ -20,7 +20,7 @@ public class LootConfigData {
     public LootData toData(IRelicItem relic) {
         LootData data = relic.getLootData();
 
-        data.setEntries(entries.stream().map(entry -> new LootEntry(entry.getDimensions(), entry.getBiomes(), entry.getTables())).toList());
+        data.setEntries(entries.stream().map(entry -> new LootEntry(entry.getDimensions(), entry.getBiomes(), entry.getTables(), entry.getWeight())).toList());
 
         return data;
     }

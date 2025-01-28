@@ -16,7 +16,7 @@ public class LootData {
     private List<LootEntry> entries;
 
     public LootConfigData toConfigData() {
-        return new LootConfigData(entries.stream().map(entry -> new LootEntryConfigData(entry.getDimensions(), entry.getBiomes(), entry.getTables())).toList());
+        return new LootConfigData(entries.stream().map(entry -> new LootEntryConfigData(entry.getDimensions(), entry.getBiomes(), entry.getTables(), entry.getWeight())).toList());
     }
 
     public static class LootDataBuilder {

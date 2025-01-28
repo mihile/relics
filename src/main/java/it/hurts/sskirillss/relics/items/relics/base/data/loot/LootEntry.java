@@ -18,6 +18,8 @@ public class LootEntry {
     private List<String> biomes;
     @Builder.Default
     private List<String> tables;
+    @Builder.Default
+    private int weight = 1;
 
     public static class LootEntryBuilder {
         private List<String> dimensions = new ArrayList<>();
