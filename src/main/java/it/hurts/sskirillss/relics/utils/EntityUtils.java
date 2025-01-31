@@ -256,12 +256,12 @@ public class EntityUtils {
         return items;
     }
 
-    public static Stream<LivingEntity> gatherPotentialTargets(Entity entity, double radius) {
-        return entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius)).stream()
+    public static <T extends LivingEntity> Stream<T> gatherPotentialTargets(Entity seeker, Class<T> type, double radius) {
+        return seeker.getCommandSenderWorld().getEntitiesOfClass(type, seeker.getBoundingBox().inflate(radius)).stream()
                 .sorted(Comparator.comparing(entry -> entry.position().distanceTo(entry.position())))
                 .filter(entry -> !(entry instanceof ArmorStand)
                         && !entry.isDeadOrDying()
-                        && entry.hasLineOfSight(entity)
-                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
+                        && entry.hasLineOfSight(seeker)
+                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(seeker));
     }
 }

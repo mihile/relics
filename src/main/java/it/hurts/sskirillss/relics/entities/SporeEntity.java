@@ -94,7 +94,7 @@ public class SporeEntity extends ThrowableProjectile implements ITargetableEntit
     }
 
     public List<LivingEntity> locateNearestTargets() {
-        return EntityUtils.gatherPotentialTargets(this, 32)
+        return EntityUtils.gatherPotentialTargets(this, LivingEntity.class, 32)
                 .filter(entity -> (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity)))
                 .toList();
     }

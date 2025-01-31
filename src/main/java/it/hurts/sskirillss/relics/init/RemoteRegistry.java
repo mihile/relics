@@ -12,6 +12,7 @@ import it.hurts.sskirillss.relics.client.renderer.tiles.ResearchingTableRenderer
 import it.hurts.sskirillss.relics.items.relics.InfiniteHamItem;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import it.hurts.sskirillss.relics.items.relics.base.IRenderableCurio;
+import it.hurts.sskirillss.relics.items.relics.necklace.HolyLocketItem;
 import it.hurts.sskirillss.relics.utils.EntityUtils;
 import it.hurts.sskirillss.relics.utils.Reference;
 import net.minecraft.client.Minecraft;
@@ -94,6 +95,8 @@ public class RemoteRegistry {
 
             ItemProperties.register(ItemRegistry.BLAZING_FLASK.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "active"),
                     (stack, world, entity, id) -> stack.get(WORLD_POSITION) == null ? 0 : 1);
+            ItemProperties.register(ItemRegistry.HOLY_LOCKET.get(), ResourceLocation.fromNamespaceAndPath(Reference.MODID, "mode"),
+                    (stack, world, entity, id) -> ((HolyLocketItem) stack.getItem()).getMode(stack).getIndex());
         });
 
         for (Item item : BuiltInRegistries.ITEM.stream().toList()) {

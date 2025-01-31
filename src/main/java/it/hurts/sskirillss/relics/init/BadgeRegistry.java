@@ -22,7 +22,6 @@ public class BadgeRegistry {
     public static final Supplier<AbilityBadge> CYCLICAL = BADGES.register("cyclical", CyclicalBadge::new);
     public static final Supplier<AbilityBadge> TOGGLEABLE = BADGES.register("toggleable", ToggleableBadge::new);
     public static final Supplier<AbilityBadge> CHARGEABLE = BADGES.register("chargeable", ChargeableBadge::new);
-    public static final Supplier<AbilityBadge> STATED = BADGES.register("stated", StatedBadge::new);
 
     public static final Supplier<RelicBadge> FLAWLESS_RELIC = BADGES.register("flawless_relic", FlawlessRelicBadge::new);
 
