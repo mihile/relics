@@ -118,11 +118,11 @@
   "item.relics.holy_locket": "Священный медальон",
   "tooltip.relics.holy_locket.description": "Наделяет носителя способностью обращать исцеление противников против них самих.",
   "tooltip.relics.holy_locket.ability.faith": "Верование",
-  "tooltip.relics.holy_locket.ability.faith.description": "Имеет 2 переключаемых режима: святость и нечестивость. В красном режиме святости крадёт %1$s%% исцеления видимых существ в радиусе %3$s блоков носителю реликвии. В синем режиме нечестивости наносит всем видимым существам в радиусе %3$s блоков урон в размере %2$s%% от получаемого носителем реликвии исцеления.",
+  "tooltip.relics.holy_locket.ability.faith.description": "Имеет 2 переключаемых режима: святость и нечестивость. В красном режиме святости крадёт %1$s%% исцеления видимых существ в радиусе %3$s блоков носителю реликвии. В синем режиме нечестивости наносит всем видимым существам в том же радиусе урон в размере %2$s%% от получаемого носителем реликвии исцеления.",
   "tooltip.relics.holy_locket.ability.penitence": "Покаяние",
   "tooltip.relics.holy_locket.ability.penitence.description": "Поджигает атакуемую нежить на 10 секунд и увеличивает наносимый по ней урон на %1$s%%.",
   "tooltip.relics.holy_locket.ability.ascension": "Вознесение",
-  "tooltip.relics.holy_locket.ability.ascension.description": "Убийство цели наделяет носителя реликвии временным суммирующимся эффектом бессмертия на %1$s секунд.",
+  "tooltip.relics.holy_locket.ability.ascension.description": "Убийство цели наделяет носителя реликвии временным суммирующимся вплоть до %1$s секунд эффектом бессмертия на %2$s секунд.",
   "tooltip.relics.holy_locket.leveling_source.faith.title": "Верование",
   "tooltip.relics.holy_locket.leveling_source.faith.description": "+%1$s единиц опыта за каждое срабатывание способности %2$s.",
   "tooltip.relics.holy_locket.leveling_source.penitence.title": "Покаяние",
@@ -470,6 +470,7 @@
   "effect.relics.vanishing": "Исчезновение",
   "effect.relics.anti_heal": "Анти-регенерация",
   "effect.relics.bleeding": "Кровотечение",
+  "effect.relics.immortality": "Бессмертие",
 
   "command.relics.base.not_relic": "Предмет в руке должен являться реликвией!",
 

@@ -49,20 +49,28 @@ public class HolyLocketItem extends RelicItem {
                                         .type(CastType.INSTANTANEOUS)
                                         .build())
                                 .icon((player, stack, ability) -> ability + "_" + getMode(stack).name().toLowerCase(Locale.ROOT))
-                                .stat(StatData.builder("damage")
+                                .stat(StatData.builder("health")
                                         .initialValue(0.1D, 0.25D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.1D)
-                                        .formatValue(value -> (int) (MathUtils.round(value, 3) * 100))
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
-                                .stat(StatData.builder("health")
+                                .stat(StatData.builder("damage")
                                         .initialValue(0.25D, 0.75D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.4D)
-                                        .formatValue(value -> (int) (MathUtils.round(value, 3) * 100))
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.5D)
+                                        .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
                                 .stat(StatData.builder("radius")
-                                        .initialValue(2.5D, 5D)
-                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.3D)
+                                        .initialValue(5D, 10D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.25D)
                                         .formatValue(value -> MathUtils.round(value, 1))
+                                        .build())
+                                .research(ResearchData.builder()
+                                        .star(0, 13, 5).star(1, 6, 8).star(2, 10, 12)
+                                        .star(3, 4, 13).star(4, 18, 13).star(5, 8, 16)
+                                        .star(6, 14, 16).star(7, 5, 20).star(8, 17, 20)
+                                        .star(9, 11, 24).star(10, 8, 28).star(11, 14, 28)
+                                        .link(0, 2).link(0, 4).link(1, 2).link(1, 3).link(3, 5).link(4, 6).link(5, 6).link(3, 7)
+                                        .link(4, 8).link(7, 9).link(8, 9).link(9, 10).link(9, 11).link(10, 11)
                                         .build())
                                 .build())
                         .ability(AbilityData.builder("penitence")
@@ -72,11 +80,21 @@ public class HolyLocketItem extends RelicItem {
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.3D)
                                         .formatValue(value -> (int) MathUtils.round(value * 100, 0))
                                         .build())
+                                .research(ResearchData.builder()
+                                        .star(0, 7, 12).star(1, 15, 12).star(2, 6, 19)
+                                        .star(3, 16, 19).star(4, 9, 26).star(5, 13, 26)
+                                        .link(0, 1).link(0, 2).link(1, 3).link(2, 4).link(3, 5).link(4, 5)
+                                        .build())
                                 .build())
                         .ability(AbilityData.builder("ascension")
                                 .requiredLevel(10)
-                                .requiredPoints(2)
+                                .requiredPoints(3)
                                 .maxLevel(5)
+                                .stat(StatData.builder("max_duration")
+                                        .initialValue(7.5D, 15D)
+                                        .upgradeModifier(UpgradeOperation.MULTIPLY_TOTAL, 0.64375D)
+                                        .formatValue(value -> MathUtils.round(value, 1))
+                                        .build())
                                 .stat(StatData.builder("duration")
                                         .initialValue(0.5D, 1D)
                                         .upgradeModifier(UpgradeOperation.MULTIPLY_BASE, 0.3D)
@@ -92,7 +110,7 @@ public class HolyLocketItem extends RelicItem {
                         .build())
                 .leveling(LevelingData.builder()
                         .initialCost(100)
-                        .maxLevel(15)
+                        .maxLevel(20)
                         .step(100)
                         .sources(LevelingSourcesData.builder()
                                 .source(LevelingSourceData.abilityBuilder("faith")
@@ -196,8 +214,13 @@ public class HolyLocketItem extends RelicItem {
                     continue;
 
                 var effect = player.getEffect(EffectRegistry.IMMORTALITY);
+                var duration = effect == null ? 0 : effect.getDuration();
+                var maxDuration = (int) (relic.getStatValue(stack, "ascension", "max_duration") * 20);
 
-                player.addEffect(new MobEffectInstance(EffectRegistry.IMMORTALITY, (int) ((relic.getStatValue(stack, "ascension", "duration") * 20) + (effect != null ? effect.getDuration() : 0))));
+                if (duration >= maxDuration)
+                    continue;
+
+                player.addEffect(new MobEffectInstance(EffectRegistry.IMMORTALITY, (int) Math.min((relic.getStatValue(stack, "ascension", "duration") * 20) + duration, maxDuration)));
 
                 relic.spreadRelicExperience(player, stack, 1);
             }
@@ -241,12 +264,15 @@ public class HolyLocketItem extends RelicItem {
                 }
             }
 
-            if (entity instanceof Player player) {
+            if (entity instanceof Player player && player.getHealth() < player.getMaxHealth()) {
                 for (var stack : EntityUtils.findEquippedCurios(player, ItemRegistry.HOLY_LOCKET.get())) {
                     if (!(stack.getItem() instanceof HolyLocketItem relic) || relic.getMode(stack) != Mode.WICKEDNESS || !relic.canPlayerUseAbility(player, stack, "faith"))
                         continue;
 
                     for (var target : EntityUtils.gatherPotentialTargets(player, LivingEntity.class, relic.getStatValue(stack, "faith", "radius")).toList()) {
+                        if (player.getStringUUID().equals(target.getStringUUID()))
+                            continue;
+
                         var essence = new DeathEssenceEntity(EntityRegistry.DEATH_ESSENCE.get(), level);
 
                         essence.setOwner(player);

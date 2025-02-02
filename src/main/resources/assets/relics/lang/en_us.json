@@ -119,11 +119,11 @@
   "item.relics.holy_locket": "Holy Locket",
   "tooltip.relics.holy_locket.description": "Grants the wearer the ability to turn enemies' healing against them.",
   "tooltip.relics.holy_locket.ability.faith": "Faith",
-  "tooltip.relics.holy_locket.ability.faith.description": "Has 2 toggleable modes: Holiness and Unholiness. In the red Holiness mode, steals %1$s%% of the healing from visible entities within a radius of %3$s blocks and grants it to the relic's wearer. In the blue Unholiness mode, deals damage to all visible entities within a radius of %3$s blocks equal to %2$s%% of the healing received by the relic's wearer.",
+  "tooltip.relics.holy_locket.ability.faith.description": "Has 2 toggleable modes: Holiness and Unholiness. In the red Holiness mode, steals %1$s%% of the healing from visible entities within a radius of %3$s blocks and transfers it to the relic's wearer. In the blue Unholiness mode, deals damage to all visible entities within the same radius equal to %2$s%% of the healing received by the relic's wearer.",
   "tooltip.relics.holy_locket.ability.penitence": "Penitence",
   "tooltip.relics.holy_locket.ability.penitence.description": "Ignites undead enemies for 10 seconds and increases damage dealt to them by %1$s%%.",
   "tooltip.relics.holy_locket.ability.ascension": "Ascension",
-  "tooltip.relics.holy_locket.ability.ascension.description": "Killing a target grants the relic's wearer a temporary stacking immortality effect for %1$s seconds.",
+  "tooltip.relics.holy_locket.ability.ascension.description": "Killing a target grants the relic's wearer a temporary stacking immortality effect for %2$s seconds, up to a maximum of %1$s seconds.",
   "tooltip.relics.holy_locket.leveling_source.faith.title": "Faith",
   "tooltip.relics.holy_locket.leveling_source.faith.description": "+%1$s experience points for each activation of the %2$s ability.",
   "tooltip.relics.holy_locket.leveling_source.penitence.title": "Penitence",
@@ -474,6 +474,7 @@
   "effect.relics.vanishing": "Vanishing",
   "effect.relics.anti_heal": "Anti-Heal",
   "effect.relics.bleeding": "Bleeding",
+  "effect.relics.immortality": "Immortality",
 
   "command.relics.base.not_relic": "The item in hand must be a relic!",
 
