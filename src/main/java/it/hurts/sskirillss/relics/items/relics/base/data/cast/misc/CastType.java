@@ -14,8 +14,7 @@ public enum CastType {
     INTERRUPTIBLE(2),
     CYCLICAL(3),
     TOGGLEABLE(4),
-    CHARGEABLE(5),
-    STATED(6);
+    CHARGEABLE(5);
 
     public static final IntFunction<CastType> BY_ID = ByIdMap.continuous(CastType::getId, CastType.values(), ByIdMap.OutOfBoundsStrategy.ZERO);
 

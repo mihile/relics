@@ -25,6 +25,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotResult;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -178,6 +179,17 @@ public class EntityUtils {
         return optional.get().getRight();
     }
 
+    public static List<ItemStack> findEquippedCurios(Entity entity, Item item) {
+        if (!(entity instanceof Player player))
+            return List.of();
+
+        return CuriosApi.getCuriosInventory(player)
+                .map(inventory -> inventory.findCurios(item).stream()
+                        .map(SlotResult::stack)
+                        .toList())
+                .orElse(List.of());
+    }
+
     public static int getExperienceForLevel(int level) {
         return level >= 30 ? 112 + (level - 30) * 9 : level >= 15 ? 37 + (level - 15) * 5 : 7 + level * 2;
     }
@@ -244,12 +256,12 @@ public class EntityUtils {
         return items;
     }
 
-    public static Stream<LivingEntity> gatherPotentialTargets(Entity entity, double radius) {
-        return entity.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius)).stream()
+    public static <T extends LivingEntity> Stream<T> gatherPotentialTargets(Entity seeker, Class<T> type, double radius) {
+        return seeker.getCommandSenderWorld().getEntitiesOfClass(type, seeker.getBoundingBox().inflate(radius)).stream()
                 .sorted(Comparator.comparing(entry -> entry.position().distanceTo(entry.position())))
                 .filter(entry -> !(entry instanceof ArmorStand)
                         && !entry.isDeadOrDying()
-                        && entry.hasLineOfSight(entity)
-                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
+                        && entry.hasLineOfSight(seeker)
+                        && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(seeker));
     }
 }

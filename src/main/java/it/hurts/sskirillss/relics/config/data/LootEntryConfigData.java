@@ -13,4 +13,6 @@ public class LootEntryConfigData {
     private List<String> dimensions;
     private List<String> biomes;
     private List<String> tables;
+
+    private int weight;
 }

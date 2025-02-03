@@ -1,13 +1,13 @@
 package it.hurts.sskirillss.relics.client.handlers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import it.hurts.sskirillss.relics.api.events.common.TooltipDisplayEvent;
 import it.hurts.sskirillss.relics.client.screen.description.misc.DescriptionUtils;
 import it.hurts.sskirillss.relics.init.HotkeyRegistry;
 import it.hurts.sskirillss.relics.items.relics.base.IRelicItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -30,13 +30,11 @@ public class DescriptionHandler {
 
     private static Slot slot;
 
-    private static int width = 175;
+    private static int width = 200;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        var player = event.getEntity();
-
-        if (!player.level().isClientSide())
+        if (!(event.getEntity() instanceof LocalPlayer player))
             return;
 
         ticksCountOld = ticksCount;
@@ -59,7 +57,7 @@ public class DescriptionHandler {
         var menu = player.containerMenu;
 
         var oldId = slot == null ? -1 : slot.getContainerSlot();
-        var id = 0;
+        var id = -1;
 
         for (int i = 0; i < menu.slots.size(); i++) {
             var entry = menu.slots.get(i);
@@ -72,8 +70,12 @@ public class DescriptionHandler {
             }
         }
 
-        if (slot == null)
+        if (slot == null || id == -1) {
+            ticksCount = 0;
+            ticksCountOld = 0;
+
             return;
+        }
 
         var stack = slot.getItem();
 
@@ -140,11 +142,11 @@ public class DescriptionHandler {
         return component;
     }
 
-    @SubscribeEvent
-    public static void onTooltipDisplay(TooltipDisplayEvent event) {
-        if (!(event.getStack().getItem() instanceof IRelicItem))
-            return;
-
-        width = event.getWidth();
-    }
+//    @SubscribeEvent
+//    public static void onTooltipDisplay(TooltipDisplayEvent event) {
+//        if (!(event.getStack().getItem() instanceof IRelicItem))
+//            return;
+//
+//        width = event.getWidth();
+//    }
 }

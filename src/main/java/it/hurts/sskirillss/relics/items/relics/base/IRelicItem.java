@@ -878,26 +878,29 @@ public interface IRelicItem {
         return randomizeStat(stack, ability, stat, new Random().nextInt(getMaxQuality() + 1));
     }
 
-    default double getStatValue(ItemStack stack, String ability, String stat, int points) {
-        StatData data = getStatData(ability, stat);
+    default double getRelativeStatValue(String ability, String stat, double value, int points) {
+        var data = getStatData(ability, stat);
 
-        double result = 0D;
+        var result = 0D;
 
         if (data == null)
             return result;
 
-        double current = getStatInitialValue(stack, ability, stat);
-        double step = data.getUpgradeModifier().getValue();
+        var step = data.getUpgradeModifier().getValue();
 
         switch (data.getUpgradeModifier().getKey()) {
-            case ADD -> result = current + (points * step);
-            case MULTIPLY_BASE -> result = current + ((current * step) * points);
-            case MULTIPLY_TOTAL -> result = current * Math.pow(step + 1, points);
+            case ADD -> result = value + (points * step);
+            case MULTIPLY_BASE -> result = value + ((value * step) * points);
+            case MULTIPLY_TOTAL -> result = value * Math.pow(step + 1, points);
         }
 
-        Pair<Double, Double> threshold = data.getThresholdValue();
+        var threshold = data.getThresholdValue();
 
         return MathUtils.round(Mth.clamp(result, threshold.getKey(), threshold.getValue()), 5);
+    }
+
+    default double getStatValue(ItemStack stack, String ability, String stat, int points) {
+        return getRelativeStatValue(ability, stat, getStatInitialValue(stack, ability, stat), points);
     }
 
     default double getStatValue(ItemStack stack, String ability, String stat) {

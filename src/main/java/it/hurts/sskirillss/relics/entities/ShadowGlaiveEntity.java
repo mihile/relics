@@ -84,7 +84,7 @@ public class ShadowGlaiveEntity extends ThrowableProjectile implements ITargetab
     }
 
     public List<LivingEntity> locateNearestTargets() {
-        return EntityUtils.gatherPotentialTargets(this, 16)
+        return EntityUtils.gatherPotentialTargets(this, LivingEntity.class,16)
                 .filter(entity -> (lastTarget == null || !lastTarget.getStringUUID().equals(entity.getStringUUID()))
                         && (!(this.getOwner() instanceof Player player) || !EntityUtils.isAlliedTo(player, entity)))
                 .toList();
